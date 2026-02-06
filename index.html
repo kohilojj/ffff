@@ -2,34 +2,136 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Norwegian - Boarding Pass</title>
     <style>
-        /* Norwegianin tyyliin */
-        body { font-family: 'Open Sans', Arial, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px 0; }
+        :root { --norwegian-red: #d81921; }
+        body { margin: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #eef2f5; color: #333; }
         
-        #boarding-pass { 
-            background: white; width: 680px; padding: 25px 30px; border-radius: 6px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #ddd; 
-            box-sizing: border-box; position: relative;
+        .ticket { 
+            background: #fff; width: 100%; max-width: 480px; margin: 0 auto; 
+            min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,0.1); display: flex; flex-direction: column;
         }
 
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px; }
-        .logo { font-size: 26px; font-weight: 800; color: #cc0000; letter-spacing: -0.5px; } /* Norwegianin punainen */
-        .pass-title { font-size: 22px; font-weight: 600; color: #333; }
+        .header { 
+            background: var(--norwegian-red); padding: 25px 20px; color: white; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1.5px; }
+        .boarding-pass-text { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        .segment { display: flex; margin-bottom: 20px; }
-        .segment-left { flex: 0 0 70%; padding-right: 20px; }
-        .segment-right { flex: 0 0 30%; border-left: 2px dashed #eee; padding-left: 20px; text-align: right; }
+        .content { padding: 30px 20px; flex-grow: 1; }
 
-        .field-row { display: flex; margin-bottom: 10px; }
-        .field { flex: 1; margin-right: 20px; }
-        .field:last-child { margin-right: 0; }
-        .field-label { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 2px; display: block; }
-        .field-value { font-size: 18px; font-weight: bold; color: #333; }
+        .route { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .city { text-align: center; }
+        .city-code { font-size: 48px; font-weight: 800; color: #000; line-height: 1; }
+        .city-name { font-size: 14px; color: #888; margin-top: 5px; }
+        .plane-icon { font-size: 28px; color: var(--norwegian-red); animation: fly 3s ease-in-out infinite; }
+        @keyframes fly { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 40px; }
+        .label { font-size: 10px; color: #999; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; display: block; }
+        .value { font-size: 20px; font-weight: bold; color: #222; }
+        .red-value { color: var(--norwegian-red); font-size: 26px; }
+
+        .barcode-area { 
+            border-top: 1px solid #eee; padding-top: 30px; text-align: center;
+        }
+        .barcode { 
+            width: 85%; height: 70px; background: repeating-linear-gradient(90deg, #111, #111 2px, #fff 2px, #fff 6px);
+            margin: 0 auto 15px; border-radius: 2px;
+        }
+        .passenger { font-size: 18px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .tos { 
+            font-size: 9px; color: #bbb; padding: 20px; background: #fafafa; 
+            border-top: 1px solid #eee; text-align: left; line-height: 1.4;
+        }
+        .tos b { color: #999; }
+    </style>
+</head>
+<body>
+
+<div class="ticket">
+    <div class="header">
+        <div class="logo">norwegian</div>
+        <div class="boarding-pass-text">Digital Boarding Pass</div>
+    </div>
+
+    <div class="content">
+        <div class="route">
+            <div class="city">
+                <div class="city-code">HEL</div>
+                <div class="city-name">Helsinki</div>
+            </div>
+            <div class="plane-icon">✈️</div>
+            <div class="city">
+                <div class="city-code">NRT</div>
+                <div class="city-name">Tokyo</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div>
+                <span class="label">Flight</span>
+                <span class="value">DY 701</span>
+            </div>
+            <div>
+                <span class="label">Date</span>
+                <span class="value" id="date-field">--</span>
+            </div>
+            <div>
+                <span class="label">Boarding</span>
+                <span class="value red-value" id="time-field">--</span>
+            </div>
+            <div>
+                <span class="label">Gate</span>
+                <span class="value red-value">24A</span>
+            </div>
+            <div>
+                <span class="label">Seat</span>
+                <span class="value">04C</span>
+            </div>
+            <div>
+                <span class="label">Class</span>
+                <span class="value">Premium</span>
+            </div>
+        </div>
+
+        <div class="barcode-area">
+            <div class="barcode"></div>
+            <div class="passenger">MATKUSTAJA / TROLLI</div>
+            <div style="font-size: 11px; color: #999; margin-top: 5px;">PNR: UOUYNN | SEQ: 0048</div>
+        </div>
+    </div>
+
+    <div class="tos">
+        <b>KÄYTTÖEHDOT:</b> Tämä sivu on tarkoitettu ainoastaan viihteelliseen ja testauskäyttöön. 
+        Palvelun tarjoaja tai ylläpitäjä <b>ei vastaa millään tavalla</b> mistään suorista, epäsuorista tai satunnaisista vahingoista, 
+        kuten myöhästymisistä, epäonnistuneista matkoista tai oikeudellisista seuraamuksista. 
+        <b>Emme vastaa mistään saatanan mistään.</b> Käyttämällä sivua hyväksyt täyden vastuun.
+    </div>
+</div>
+
+<script>
+    // Päivitetään tiedot automaattisesti
+    function updateTicket() {
+        const now = new Date();
+        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         
-        .large-field .field-value { font-size: 28px; }
+        // Päivämäärä on huomenna
+        const tomorrow = new Date();
+        tomorrow.setDate(now.getDate() + 1);
+        document.getElementById('date-field').innerText = tomorrow.getDate() + " " + months[tomorrow.getMonth()];
 
-        .flight-info { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; }
-        .flight-data { font-size: 13px; color: #666; line-height: 1.6; }
-        .barcode { width: 150px; height: 50px; background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIIAAAAyAQMAAAC8gD5eAAAABlBMVEUAAAD///84j1hEAAAAwElEQVQokeWTMQ6DIAxFv5B7B19G/eBq62/iW5wzK5XW7K/eJJB1h6a5zWbX/5N5kG1oH1c0fH8M/pS231mKxR3xN3wJ11R4Jv8E39T3i/8C/P/eE+f+9F9Q+6D6x/gD/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H
+        // Boarding time on 2 tuntia tästä hetkestä
+        now.setHours(now.getHours() + 2);
+        const hours = now.getHours().toString().padStart(2, '0');
+        const mins = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('time-field').innerText = hours + ":" + mins;
+    }
+    updateTicket();
+</script>
+
+</body>
+</html>
