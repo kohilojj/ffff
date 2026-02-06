@@ -3,169 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jassu & Jepu: Tinder Women</title>
+    <title>Tinder-Akatemia: Treffi-Mestari</title>
     <style>
-        :root { --tinder-pink: #fe3c72; --tinder-gray: #f0f2f5; }
-        body {
-            margin: 0; background-color: var(--tinder-gray);
-            font-family: -apple-system, sans-serif;
-            display: flex; flex-direction: column; align-items: center;
-            height: 100vh; overflow: hidden;
-        }
-        #nav {
-            width: 100%; height: 60px; background: white;
-            display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.1); z-index: 10;
-        }
-        .nav-icon { width: 35px; height: 35px; border-radius: 50%; background-size: cover; background-position: center; border: 2px solid var(--tinder-pink); }
-        #container {
-            position: relative; flex-grow: 1; width: 90%; max-width: 400px;
-            margin-top: 20px; margin-bottom: 120px;
-        }
-        .card {
-            position: absolute; width: 100%; height: 100%;
-            background: white; border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            overflow: hidden; display: flex; flex-direction: column;
-            cursor: grab; transition: transform 0.3s ease; user-select: none;
-        }
-        .card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        .card-bottom {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            color: white; pointer-events: none;
-        }
-        .card-name { font-size: 26px; font-weight: bold; }
-        .card-bio { font-size: 15px; opacity: 0.9; margin-top: 5px; }
-        #actions { position: absolute; bottom: 30px; display: flex; gap: 30px; z-index: 20; }
-        .btn {
-            width: 65px; height: 65px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            font-size: 28px; cursor: pointer; border: none; transition: transform 0.1s;
-        }
-        .btn-no { color: #fd5068; border: 2px solid #fd5068; }
-        .btn-yes { color: #1be4a1; border: 2px solid #1be4a1; }
-        #match-screen {
+        :root { --tinder-pink: #fe3c72; --gold: #ffd700; --bg: #f0f2f5; }
+        body { margin: 0; background: var(--bg); font-family: -apple-system, sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Mittarit */
+        #stat-bar { background: white; padding: 15px; display: flex; justify-content: space-around; border-bottom: 2px solid #ddd; font-weight: bold; font-size: 14px; }
+        #charm-bar-container { width: 100%; height: 10px; background: #ddd; }
+        #charm-fill { height: 100%; background: var(--tinder-pink); width: 0%; transition: 0.5s; }
+
+        #chat-history { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: white; }
+        .msg { padding: 12px 16px; border-radius: 20px; max-width: 75%; font-size: 15px; }
+        .msg.me { align-self: flex-end; background: var(--tinder-pink); color: white; }
+        .msg.them { align-self: flex-start; background: #e9e9eb; color: black; }
+
+        #options-container { height: 300px; overflow-y: auto; background: #fff; padding: 10px; border-top: 1px solid #ddd; display: grid; gap: 8px; }
+        .option { padding: 12px; border-radius: 12px; border: 1px solid #ddd; background: #f8f9fa; font-size: 14px; cursor: pointer; }
+        .option:hover { border-color: var(--tinder-pink); background: #fff5f7; }
+
+        /* Palaute-ikkuna */
+        #coach-feedback {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); color: white;
-            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
+            background: rgba(0,0,0,0.9); display: none; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 2000; color: white; padding: 20px;
         }
-        #match-screen h1 { font-size: 50px; color: var(--tinder-pink); font-family: 'Brush Script MT', cursive; }
-        .match-imgs { display: flex; gap: 15px; margin: 20px; }
+        .feedback-card { background: white; color: black; padding: 25px; border-radius: 25px; max-width: 320px; text-align: center; }
+        .feedback-card img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--tinder-pink); margin-bottom: 15px; }
+        
+        #victory-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--gold); display: none; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 3000; text-align: center;
+        }
     </style>
 </head>
 <body>
 
-<div id="nav">
-    <div class="nav-icon" style="background-image: url('jassu.png');"></div>
-    <div style="font-weight: bold; color: var(--tinder-pink); font-size: 22px;">Tinder</div>
-    <div class="nav-icon" style="background-image: url('jepu.png');"></div>
+<div id="stat-bar">
+    <span>💎 Taso: <span id="rank">Aloittelija</span></span>
+    <span>🏆 Charm: <span id="charm-val">0</span>/200</span>
+</div>
+<div id="charm-bar-container"><div id="charm-fill"></div></div>
+
+<div id="chat-history">
+    <div class="msg them">Moi! Sulla oli tosi mielenkiintoinen profiili. Mitäs sä tykkäät tehdä vapaa-ajalla? 😊</div>
 </div>
 
-<div id="container"></div>
+<div id="options-container"></div>
 
-<div id="actions">
-    <button class="btn btn-no" onclick="handleBtn(false)">✖</button>
-    <button class="btn btn-yes" onclick="handleBtn(true)">❤</button>
-</div>
-
-<div id="match-screen" onclick="this.style.display='none'">
-    <h1>It's a Match! ❤️</h1>
-    <div class="match-imgs">
-        <div class="nav-icon" style="width:100px; height:100px; background-image: url('jassu.png'); border: 3px solid white;"></div>
-        <div id="match-pic" style="width:100px; height:100px; border-radius:50%; background-size:cover; background-position:center; border: 3px solid white;"></div>
+<div id="coach-feedback">
+    <div class="feedback-card">
+        <img id="coach-img" src="jassu.png">
+        <h3 id="coach-title">Jassun Vinkki</h3>
+        <p id="coach-txt"></p>
+        <button onclick="closeFeedback()" style="background:var(--tinder-pink); color:white; border:none; padding:12px 25px; border-radius:15px; font-weight:bold; cursor:pointer;">Yritän uudestaan!</button>
     </div>
-    <p style="font-size: 20px;">Olette tykänneet toisistanne!</p>
-    <button style="margin-top:30px; padding:12px 40px; border-radius:25px; border:none; background:var(--tinder-pink); color:white; font-weight:bold;">LÄHETÄ VIESTI</button>
+</div>
+
+<div id="victory-screen">
+    <h1 style="font-size: 50px;">TREFFIT sovittu! 🥂</h1>
+    <p style="font-size: 20px; font-weight: bold;">Sait tyttöystävän (pelissä)!</p>
+    <div style="display:flex; gap:10px; margin:20px;">
+        <img src="jassu.png" width="70">
+        <img src="jepu.png" width="70">
+    </div>
+    <button onclick="location.reload()" style="padding:15px 30px; border-radius:30px; border:none; background:white; font-weight:bold;">PELAA UUDESTAAN</button>
 </div>
 
 <script>
-    const container = document.getElementById('container');
-    const kissSound = new Audio('https://www.myinstants.com/media/sounds/kiss-sound-effect.mp3');
-    
-    const bios = ["Elämästä nautiskelija 🌟", "Tanssi on intohimo 💃", "Etsin matkakumppania ✈️", "Viiniä ja hyvää ruokaa 🍷", "Koiraihminen 🐾", "Nauretaan yhdessä? 😊"];
-    const names = ["Anna", "Emilia", "Sara", "Laura", "Sofia", "Iida", "Minna", "Sanni", "Hanna", "Ella"];
+    let score = 0;
+    const history = document.getElementById('chat-history');
+    const optionsCont = document.getElementById('options-container');
 
-    for (let i = 1; i <= 90; i++) {
-        const data = {
-            name: names[Math.floor(Math.random() * names.length)],
-            age: Math.floor(Math.random() * 10) + 20,
-            // HAKEE NAISET: men sijasta women
-            img: `https://randomuser.me/api/portraits/women/${i}.jpg`,
-            bio: bios[Math.floor(Math.random() * bios.length)]
-        };
-        createCard(data);
+    // VIESTIPAKETIT
+    const stages = {
+        chatting: [
+            { t: "Tykkään urheilla ja ulkoilla, entä sä? 🏃‍♂️", type: 'good', pts: 40 },
+            { t: "Vähän kaikkea, mut kokkaaminen on mun juttu! 🍳", type: 'good', pts: 40 },
+            { t: "Oot hyvän näköinen ja sulla on isot tisit.", type: 'bad', f: "Jepu: EI! Tämä on törkeää. Nainen haluaa tulla kohdelluksi ihmisenä, ei esineenä. Pisteet laskee!" },
+            { t: "En mitään ihmeellistä, tylsää on.", type: 'bad', f: "Jassu: Älä ole tylsä! Kukaan ei halua tyttöystäväksi ihmistä, jolla ei ole intohimoja." }
+        ],
+        dating: [
+            { t: "Haluaisitko mennä ensi viikolla kävelylle ja kahville? ☕", type: 'good', pts: 100 },
+            { t: "Tiedän yhden tosi kivan paikan, mentäiskö sinne syömään? 🍕", type: 'good', pts: 100 },
+            { t: "Tuu mun luo yöksi, katsotaan leffaa.", type: 'bad', f: "Jepu: STOP! Tämä on liian suoraa. Useimmat naiset kokevat tämän ahdistavaksi ensimmäisenä ehdotuksena." },
+            { t: "Mennäänkö sun luo?", type: 'bad', f: "Jassu: Todella huono idea. Ehdota aina jotain julkista paikkaa ensimmäisille treffeille, se on turvallisempaa." }
+        ]
+    };
+
+    function renderOptions() {
+        optionsCont.innerHTML = "";
+        let currentPool = score >= 80 ? stages.dating : stages.chatting;
+        
+        currentPool.forEach(opt => {
+            const btn = document.createElement('div');
+            btn.className = 'option';
+            btn.innerText = opt.t;
+            btn.onclick = () => select(opt);
+            optionsCont.appendChild(btn);
+        });
     }
 
-    function createCard(data) {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <img src="${data.img}">
-            <div class="card-bottom">
-                <div class="card-name">${data.name}, ${data.age}</div>
-                <div class="card-bio">${data.bio}</div>
-            </div>
-        `;
-
-        let startX, currentX;
-
-        const start = (e) => {
-            startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-            document.addEventListener('mousemove', move);
-            document.addEventListener('touchmove', move);
-            document.addEventListener('mouseup', end);
-            document.addEventListener('touchend', end);
-        };
-
-        const move = (e) => {
-            currentX = (e.clientX || (e.touches ? e.touches[0].clientX : 0)) - startX;
-            card.style.transform = `translateX(${currentX}px) rotate(${currentX / 15}deg)`;
-        };
-
-        const end = () => {
-            document.removeEventListener('mousemove', move);
-            document.removeEventListener('touchmove', move);
-            if (currentX > 100) swipe(1, data.img);
-            else if (currentX < -100) swipe(-1);
-            else card.style.transform = '';
-        };
-
-        const swipe = (dir, img) => {
-            card.style.transform = `translateX(${dir * 1000}px) rotate(${dir * 30}deg)`;
-            if (dir > 0 && Math.random() > 0.7) {
+    function select(opt) {
+        addMsg(opt.t, 'me');
+        if (opt.type === 'bad') {
+            setTimeout(() => {
+                const isJassu = Math.random() > 0.5;
+                document.getElementById('coach-img').src = isJassu ? 'jassu.png' : 'jepu.png';
+                document.getElementById('coach-txt').innerText = opt.f;
+                document.getElementById('coach-feedback').style.display = 'flex';
+                score = Math.max(0, score - 30);
+                updateUI();
+            }, 700);
+        } else {
+            score += opt.pts;
+            updateUI();
+            if (score >= 200) {
+                setTimeout(() => document.getElementById('victory-screen').style.display = 'flex', 1000);
+            } else {
                 setTimeout(() => {
-                    document.getElementById('match-pic').style.backgroundImage = `url('${img}')`;
-                    document.getElementById('match-screen').style.display = 'flex';
-                    kissSound.play();
-                }, 200);
+                    const ans = score >= 120 ? "Vitsi toi kuulostaa kivalta, mennään vaan! 😍" : "Kuulostaa kivalta! Kerro lisää? 😊";
+                    addMsg(ans, 'them');
+                    renderOptions();
+                }, 1000);
             }
-            setTimeout(() => card.remove(), 300);
-        };
-
-        card.addEventListener('mousedown', start);
-        card.addEventListener('touchstart', start);
-        container.appendChild(card);
-    }
-
-    function handleBtn(isLike) {
-        const cards = container.querySelectorAll('.card');
-        if (cards.length > 0) {
-            const topCard = cards[cards.length - 1];
-            const dir = isLike ? 1 : -1;
-            const img = topCard.querySelector('img').src;
-            topCard.style.transform = `translateX(${dir * 1000}px) rotate(${dir * 30}deg)`;
-            if (isLike && Math.random() > 0.7) {
-                setTimeout(() => {
-                    document.getElementById('match-pic').style.backgroundImage = `url('${img}')`;
-                    document.getElementById('match-screen').style.display = 'flex';
-                    kissSound.play();
-                }, 200);
-            }
-            setTimeout(() => topCard.remove(), 300);
         }
     }
+
+    function addMsg(t, s) {
+        const b = document.createElement('div');
+        b.className = `msg ${s}`;
+        b.innerText = t;
+        history.appendChild(b);
+        history.scrollTop = history.scrollHeight;
+    }
+
+    function updateUI() {
+        document.getElementById('charm-val').innerText = score;
+        document.getElementById('charm-fill').style.width = Math.min(100, (score/200)*100) + "%";
+        if(score >= 80) document.getElementById('rank').innerText = "Charmantti";
+        if(score >= 150) document.getElementById('rank').innerText = "Treffikuningas";
+    }
+
+    function closeFeedback() {
+        document.getElementById('coach-feedback').style.display = 'none';
+        renderOptions();
+    }
+
+    renderOptions();
 </script>
 </body>
 </html>
