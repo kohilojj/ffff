@@ -5,93 +5,154 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuluttajapaneeli | Tuotetesti</title>
     <style>
-        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; color: #333; }
-        .top-bar { background: #222; color: #fff; padding: 10px; font-size: 11px; text-align: center; letter-spacing: 1px; }
-        .container { max-width: 450px; margin: 20px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .img-err { width: 100%; height: 180px; background: #f9f9f9; border: 1px dashed #ddd; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #aaa; margin-bottom: 20px; font-size: 13px; }
-        h1 { font-size: 20px; margin: 0 0 10px 0; color: #111; }
-        .progress-box { height: 6px; background: #eee; border-radius: 10px; margin: 20px 0; overflow: hidden; }
-        #fill { height: 100%; background: #ff7eb9; width: 2%; transition: 0.3s; }
-        #q-text { font-weight: bold; font-size: 16px; margin-bottom: 15px; display: block; min-height: 45px; }
-        .btn-opt { display: block; width: 100%; padding: 14px; margin-bottom: 8px; border: 1px solid #eee; background: #fff; border-radius: 8px; cursor: pointer; text-align: left; font-size: 15px; transition: 0.2s; }
-        .btn-opt:hover { background: #fff9fb; border-color: #ff7eb9; }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #fdfdfd; color: #333; }
+        
+        /* Navigaatio */
+        .nav-header { background: #fff; padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+        .back-link { text-decoration: none; color: #888; font-size: 13px; display: flex; align-items: center; }
+        
+        .container { max-width: 450px; margin: 20px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+        .img-err { width: 100%; height: 120px; background: #f9f9f9; border: 1px dashed #ddd; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #aaa; margin-bottom: 20px; font-size: 11px; }
+        
+        h1 { font-size: 18px; margin: 0 0 10px 0; }
+        .progress-box { height: 6px; background: #eee; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        #fill { height: 100%; background: #4CAF50; width: 2%; transition: 0.3s; }
+        
+        #q-text { font-weight: bold; font-size: 15px; margin-bottom: 15px; display: block; min-height: 40px; }
+        
+        /* Napit ja niiden lukitus */
+        .btn-opt { display: block; width: 100%; padding: 12px; margin-bottom: 8px; border: 1px solid #eee; background: #fff; border-radius: 8px; cursor: pointer; text-align: left; font-size: 14px; transition: 0.2s; }
+        .btn-opt:disabled { background: #f2f2f2; color: #bbb; cursor: not-allowed; border-color: #eee; }
+        .timer-text { font-size: 11px; color: #ff4d7d; margin-top: 5px; font-weight: bold; }
+
+        /* Lomake */
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #666; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .confirm-btn { background: #000; color: #fff; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="top-bar">AVOIMIA TESTIPAIKKOJA: 7 / 500</div>
+<div class="nav-header">
+    <a href="https://www.lyko.fi" class="back-link">
+        <span style="font-size: 20px; margin-right: 5px;">←</span> Takaisin kauppaan
+    </a>
+    <div style="font-weight: bold; letter-spacing: 2px;">PANELI</div>
+</div>
 
-<div class="container" id="quiz-ui">
-    <div class="img-err">
-        <span style="font-size:30px;">🖼️</span>
-        <p>Tuotekuvaa ei voitu ladata.</p>
+<div class="container" id="main-ui">
+    <div id="quiz-part">
+        <div class="img-err">
+            <span>🖼️</span>
+            <p>Tuotekuva: "Everyday Essentials Kit" (Virhe ladattaessa)</p>
+        </div>
+
+        <h1>Testiryhmä: Meikkisetti</h1>
+        <p style="font-size: 12px; color: #777;">Analysoimme vastauksia huolellisesti. Odota hetki jokaisen kysymyksen kohdalla.</p>
+
+        <div class="progress-box"><div id="fill"></div></div>
+
+        <div id="question-container">
+            <span id="q-text">Vaihe 1 / 40: Kuinka usein käytät meikkejä?</span>
+            <div id="options-area">
+                <button class="btn-opt" onclick="next()" disabled>Päivittäin</button>
+                <button class="btn-opt" onclick="next()" disabled>Vain viikonloppuisin</button>
+                <button class="btn-opt" onclick="next()" disabled>En juuri koskaan</button>
+            </div>
+            <p class="timer-text" id="timer-display">Odota 5s...</p>
+        </div>
     </div>
 
-    <h1>Arkimeikkisetti - Testiryhmä</h1>
-    <p style="font-size: 13px; color: #666;">Vastaa 40 kysymykseen saadaksesi tuotepaketin (arvo 45€).</p>
-
-    <div class="progress-box"><div id="fill"></div></div>
-
-    <div id="question-container">
-        <span id="q-text">Kysymys 1 / 40: Kuinka usein käytät meikkejä?</span>
-        <div id="options-area">
-            <button class="btn-opt" onclick="handleNext()">Päivittäin</button>
-            <button class="btn-opt" onclick="handleNext()">Vain viikonloppuisin</button>
-            <button class="btn-opt" onclick="handleNext()">En juuri koskaan</button>
+    <div id="order-part" style="display:none;">
+        <h2 style="color: #4CAF50;">✓ Kysely suoritettu!</h2>
+        <p style="font-size: 14px;">Varastotilanne: <b>1 kpl jäljellä</b>. Täytä tiedot nopeasti.</p>
+        
+        <div class="form-group">
+            <label>Etu- ja sukunimi</label>
+            <input type="text" placeholder="Matti Meikäläinen">
         </div>
+        <div class="form-group">
+            <label>Sähköposti (tilausvahvistusta varten)</label>
+            <input type="email" placeholder="matti@esimerkki.fi">
+        </div>
+        <div class="form-group">
+            <label>Katuosoite ja postinumero</label>
+            <input type="text" placeholder="Meikkikuja 1 A, 00100 Helsinki">
+        </div>
+        
+        <button class="confirm-btn" onclick="showPrank()">VAHVISTA ILMAINEN TILAUS</button>
     </div>
 </div>
 
 <script>
     let step = 1;
+    let timeLeft = 5;
+    let timerId = null;
 
-    // Kysymykset ja niihin sopivat vastaukset
     const data = [
         { q: "Mikä on tärkein ominaisuus meikkivoiteessa?", a: ["Peittävyys", "Luonnollisuus", "Kestävyys"] },
         { q: "Oletko valmis antamaan rehellistä palautetta?", a: ["Kyllä", "Tietenkin", "Ehdottomasti"] },
-        { q: "Suositko hajusteettomia tuotteita?", a: ["Kyllä", "Ei merkitystä", "Vain jos iho reagoi"] },
+        { q: "Suositko hajusteettomia tuotteita?", a: ["Kyllä", "Vain joskus", "Ei merkitystä"] },
         { q: "Minkä tyyppinen iho sinulla on?", a: ["Kuiva", "Rasvoittuva", "Sekaiho"] },
-        { q: "Onko pakkauksen ulkonäkö sinulle tärkeä?", a: ["Erittäin tärkeä", "Melko tärkeä", "Ei lainkaan"] },
-        { q: "Mistä ostat yleensä kosmetiikkasi?", a: ["Marketista", "Erikoisliikkeestä", "Netistä"] },
-        { q: "Käytätkö aurinkosuojaa kasvoilla?", a: ["Joka päivä", "Vain kesällä", "En koskaan"] },
-        { q: "Kuinka monta meikkituotetta omistat?", a: ["1-5 kpl", "6-15 kpl", "Yli 20 kpl"] },
-        { q: "Haluatko testata uusia brändejä?", a: ["Kyllä mielelläni", "Ehkä", "Vain jos ne on ilmaisia"] }
+        { q: "Mistä ostat yleensä kosmetiikkasi?", a: ["Marketista", "Netistä", "Erikoisliikkeestä"] }
     ];
 
-    function handleNext() {
+    // Käynnistä ajastin heti alussa
+    startTimer();
+
+    function startTimer() {
+        timeLeft = 5;
+        const btnList = document.querySelectorAll('.btn-opt');
+        const timerDisplay = document.getElementById('timer-display');
+        
+        // Lukitse napit
+        btnList.forEach(b => b.disabled = true);
+        
+        timerId = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = `Odota ${timeLeft}s...`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerId);
+                timerDisplay.innerText = "Voit nyt vastata";
+                btnList.forEach(b => b.disabled = false);
+            }
+        }, 1000);
+    }
+
+    function next() {
         if (step < 40) {
             step++;
-            
-            // Päivitä palkki
             document.getElementById('fill').style.width = (step / 40 * 100) + "%";
             
-            // Valitse uusi kysymyspari listasta
             let item = data[step % data.length];
+            document.getElementById('q-text').innerText = `Vaihe ${step} / 40: ${item.q}`;
             
-            // Vaihda kysymyksen teksti
-            document.getElementById('q-text').innerText = `Kysymys ${step} / 40: ${item.q}`;
-            
-            // Vaihda nappien tekstit
             const buttons = document.getElementsByClassName('btn-opt');
             buttons[0].innerText = item.a[0];
             buttons[1].innerText = item.a[1];
             buttons[2].innerText = item.a[2];
 
-            // Pieni kannustus lopussa
-            if (step === 38) {
-                alert("Viimeisiä viedään! Maali häämöttää.");
-            }
+            // Käynnistä 5s lukitus uudelleen
+            startTimer();
         } else {
-            document.getElementById('quiz-ui').innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <h1 style="font-size: 60px;">🤡</h1>
-                    <h2 style="color:#ff7eb9;">SUA ON PRÄNKÄTTY!</h2>
-                    <p>Vastasit oikeesti <b>40 kysymykseen</b> turhaan...</p>
-                    <p>Ei täällä ole mitään meikkejä, tää oli vaan testi kestätkö loppuun asti. <br><br><b>Olet virallinen pränkki-uhri!</b></p>
-                    <button class="btn-opt" style="text-align:center; background:#111; color:#fff;" onclick="window.location.reload()">Nollaa sivu</button>
-                </div>
-            `;
+            document.getElementById('quiz-part').style.display = 'none';
+            document.getElementById('order-part').style.display = 'block';
         }
+    }
+
+    function showPrank() {
+        document.getElementById('main-ui').innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <h1 style="font-size: 60px;">🤡</h1>
+                <h2 style="color:red;">SUA ON HUIJATTU!</h2>
+                <p>Käytit juuri monta minuuttia elämästäsi vastaamalla feikki-kyselyyn...</p>
+                <p><b>Ei täällä ole meikkejä.</b></p>
+                <p style="font-size: 13px; color: #888;">Tää oli vaan pränkki. Sulje sivu ja jatka päivääs! 😂</p>
+                <button class="confirm-btn" onclick="location.reload()">Oon nolo, nollaa sivu</button>
+            </div>
+        `;
     }
 </script>
 </body>
