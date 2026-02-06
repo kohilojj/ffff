@@ -6,131 +6,179 @@
     <title>Norwegian - Boarding Pass</title>
     <style>
         :root { --norwegian-red: #d81921; }
-        body { margin: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #eef2f5; color: #333; }
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background: #fdfdfd; 
+            color: #1a1a1a; 
+            -webkit-font-smoothing: antialiased;
+        }
         
-        .ticket { 
-            background: #fff; width: 100%; max-width: 480px; margin: 0 auto; 
-            min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+        .ticket-wrapper { 
+            width: 100%; 
+            max-width: 480px; 
+            margin: 0 auto; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
         }
 
+        /* Virallinen yläpalkki */
         .header { 
-            background: var(--norwegian-red); padding: 25px 20px; color: white; 
-            display: flex; justify-content: space-between; align-items: center;
+            background: var(--norwegian-red); 
+            padding: 22px 20px; 
+            color: white; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
         }
-        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1.5px; }
-        .boarding-pass-text { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .logo { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; }
+        .title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
 
-        .content { padding: 30px 20px; flex-grow: 1; }
+        .content { padding: 35px 24px; flex-grow: 1; }
 
-        .route { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .city { text-align: center; }
-        .city-code { font-size: 48px; font-weight: 800; color: #000; line-height: 1; }
-        .city-name { font-size: 14px; color: #888; margin-top: 5px; }
-        .plane-icon { font-size: 28px; color: var(--norwegian-red); animation: fly 3s ease-in-out infinite; }
-        @keyframes fly { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 40px; }
-        .label { font-size: 10px; color: #999; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; display: block; }
-        .value { font-size: 20px; font-weight: bold; color: #222; }
-        .red-value { color: var(--norwegian-red); font-size: 26px; }
-
-        .barcode-area { 
-            border-top: 1px solid #eee; padding-top: 30px; text-align: center;
+        /* Reitti-osio */
+        .route-section { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 45px; 
         }
-        .barcode { 
-            width: 85%; height: 70px; background: repeating-linear-gradient(90deg, #111, #111 2px, #fff 2px, #fff 6px);
-            margin: 0 auto 15px; border-radius: 2px;
-        }
-        .passenger { font-size: 18px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        .airport-code { font-size: 52px; font-weight: 800; line-height: 1; margin: 0; }
+        .airport-name { font-size: 14px; color: #777; margin-top: 6px; font-weight: 500; }
+        .plane-divider { font-size: 26px; color: var(--norwegian-red); }
 
-        .tos { 
-            font-size: 9px; color: #bbb; padding: 20px; background: #fafafa; 
-            border-top: 1px solid #eee; text-align: left; line-height: 1.4;
+        /* Tietoruudukko */
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 30px; 
+            margin-bottom: 50px; 
         }
-        .tos b { color: #999; }
+        .data-item { display: flex; flex-direction: column; }
+        .label { font-size: 10px; color: #999; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+        .val { font-size: 22px; font-weight: 700; color: #000; }
+        .red { color: var(--norwegian-red); }
+
+        /* Alaosan koodi ja nimi */
+        .footer-section { 
+            border-top: 1px solid #f0f0f0; 
+            padding-top: 35px; 
+            text-align: center; 
+        }
+        .barcode-sim { 
+            width: 90%; 
+            height: 75px; 
+            background: repeating-linear-gradient(90deg, #111, #111 2px, #fff 2px, #fff 7px);
+            margin: 0 auto 20px;
+            border-radius: 1px;
+        }
+        .pax-name { font-size: 19px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .pnr { font-size: 12px; color: #888; margin-top: 8px; font-family: monospace; }
+
+        /* --- TÄYSI VASTUUVAPAUTUSLAUSEKE --- */
+        .disclaimer-box { 
+            background: #f8f8f8; 
+            padding: 25px; 
+            border-top: 1px solid #eee; 
+            margin-top: 40px;
+        }
+        .disclaimer-text { 
+            font-size: 10px; 
+            color: #999; 
+            line-height: 1.5; 
+            text-align: left; 
+        }
+        .disclaimer-text b { color: #666; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-<div class="ticket">
+<div class="ticket-wrapper">
     <div class="header">
         <div class="logo">norwegian</div>
-        <div class="boarding-pass-text">Digital Boarding Pass</div>
+        <div class="title">Boarding Pass</div>
     </div>
 
     <div class="content">
-        <div class="route">
-            <div class="city">
-                <div class="city-code">HEL</div>
-                <div class="city-name">Helsinki</div>
+        <div class="route-section">
+            <div>
+                <div class="airport-code">HEL</div>
+                <div class="airport-name">Helsinki</div>
             </div>
-            <div class="plane-icon">✈️</div>
-            <div class="city">
-                <div class="city-code">NRT</div>
-                <div class="city-name">Tokyo</div>
+            <div class="plane-divider">✈️</div>
+            <div>
+                <div class="airport-code">NRT</div>
+                <div class="airport-name">Tokyo</div>
             </div>
         </div>
 
-        <div class="grid">
-            <div>
+        <div class="info-grid">
+            <div class="data-item">
                 <span class="label">Flight</span>
-                <span class="value">DY 701</span>
+                <span class="val">DY 701</span>
             </div>
-            <div>
+            <div class="data-item">
                 <span class="label">Date</span>
-                <span class="value" id="date-field">--</span>
+                <span class="val" id="date">--</span>
             </div>
-            <div>
+            <div class="data-item">
                 <span class="label">Boarding</span>
-                <span class="value red-value" id="time-field">--</span>
+                <span class="val red" id="time">--</span>
             </div>
-            <div>
+            <div class="data-item">
                 <span class="label">Gate</span>
-                <span class="value red-value">24A</span>
+                <span class="val red">24A</span>
             </div>
-            <div>
+            <div class="data-item">
                 <span class="label">Seat</span>
-                <span class="value">04C</span>
+                <span class="val">04C</span>
             </div>
-            <div>
-                <span class="label">Class</span>
-                <span class="value">Premium</span>
+            <div class="data-item">
+                <span class="label">Sequence</span>
+                <span class="val">0048</span>
             </div>
         </div>
 
-        <div class="barcode-area">
-            <div class="barcode"></div>
-            <div class="passenger">MATKUSTAJA / TROLLI</div>
-            <div style="font-size: 11px; color: #999; margin-top: 5px;">PNR: UOUYNN | SEQ: 0048</div>
+        <div class="footer-section">
+            <div class="barcode-sim"></div>
+            <div class="pax-name" id="pax-name">MATKUSTAJA / NIMI</div>
+            <div class="pnr">PNR: UOUYNN | CLASS: PREMIUM</div>
         </div>
     </div>
 
-    <div class="tos">
-        <b>KÄYTTÖEHDOT:</b> Tämä sivu on tarkoitettu ainoastaan viihteelliseen ja testauskäyttöön. 
-        Palvelun tarjoaja tai ylläpitäjä <b>ei vastaa millään tavalla</b> mistään suorista, epäsuorista tai satunnaisista vahingoista, 
-        kuten myöhästymisistä, epäonnistuneista matkoista tai oikeudellisista seuraamuksista. 
-        <b>Emme vastaa mistään saatanan mistään.</b> Käyttämällä sivua hyväksyt täyden vastuun.
+    <div class="disclaimer-box">
+        <div class="disclaimer-text">
+            <b>TÄYSI VASTUUVAPAUTUSLAUSEKE:</b><br>
+            Tämä verkkosivu on tarkoitettu ainoastaan viihteelliseen ja opetukselliseen simulointikäyttöön. 
+            Sivun kehittäjä, ylläpitäjä tai julkaisija <b>ei ota minkäänlaista vastuuta</b> sivun käytöstä, 
+            sen aiheuttamista väärinkäsityksistä, suorista tai epäsuorista vahingoista, tarkastusmaksuista, 
+            matkustusoikeuden epäämisestä tai mahdollisista juridisista seuraamuksista. 
+            <b>Käyttäjä hyväksyy, ettei ylläpito vastaa mistään saatanan mistään.</b> 
+            Kaikki vastuu on yksinomaan ja täysimääräisesti henkilöllä, joka tätä sivua näyttää tai käyttää.
+        </div>
     </div>
 </div>
 
 <script>
-    // Päivitetään tiedot automaattisesti
-    function updateTicket() {
-        const now = new Date();
-        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-        
-        // Päivämäärä on huomenna
-        const tomorrow = new Date();
-        tomorrow.setDate(now.getDate() + 1);
-        document.getElementById('date-field').innerText = tomorrow.getDate() + " " + months[tomorrow.getMonth()];
-
-        // Boarding time on 2 tuntia tästä hetkestä
-        now.setHours(now.getHours() + 2);
-        const hours = now.getHours().toString().padStart(2, '0');
-        const mins = now.getMinutes().toString().padStart(2, '0');
-        document.getElementById('time-field').innerText = hours + ":" + mins;
+    // Haetaan nimi osoitteesta: ?nimi=Etunimi_Sukunimi
+    const params = new URLSearchParams(window.location.search);
+    const nimiParam = params.get('nimi');
+    if (nimiParam) {
+        document.getElementById('pax-name').innerText = nimiParam.replace(/_/g, ' ').toUpperCase();
     }
-    updateTicket();
+
+    // Automaattinen päivämäärä (tämä päivä)
+    const d = new Date();
+    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    document.getElementById('date').innerText = d.getDate() + " " + months[d.getMonth()];
+
+    // Boarding time (nykyhetki + 40 min)
+    d.setMinutes(d.getMinutes() + 40);
+    const h = d.getHours().toString().padStart(2, '0');
+    const m = d.getMinutes().toString().padStart(2, '0');
+    document.getElementById('time').innerText = h + ":" + m;
 </script>
 
 </body>
