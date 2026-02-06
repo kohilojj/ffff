@@ -3,126 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSL</title>
+    <title>HSL Mobiililippu</title>
     <style>
-        body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: #fff; overflow-x: hidden; user-select: none; }
-        
-        /* Sininen yläpalkki */
-        .header { background: #007ac9; height: 56px; display: flex; align-items: center; padding: 0 16px; color: white; font-weight: 600; font-size: 19px; }
-
-        .ticket-body { padding: 0; text-align: center; }
-
-        /* Vyöhykeympyrä sykkeellä */
-        .zone-wrap {
-            width: 135px; height: 135px; background: #64be1e; border-radius: 50%; 
-            margin: 25px auto 10px; display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 56px; font-weight: 800;
-            box-shadow: 0 0 0 0px rgba(100, 190, 30, 0.4);
-            animation: pulse-green 2.5s infinite;
+        :root {
+            --hsl-blue: #007ac9;
+            --hsl-green: #64be1e;
         }
 
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0px rgba(100, 190, 30, 0.3); }
-            70% { box-shadow: 0 0 0 15px rgba(100, 190, 30, 0); }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Yläpalkki */
+        .app-bar {
+            background-color: var(--hsl-blue);
+            height: 56px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Lippusivun sisältö */
+        .ticket-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+        }
+
+        /* Vyöhykeympyrä animaatiolla */
+        .zone-display {
+            width: 130px;
+            height: 130px;
+            background-color: var(--hsl-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 54px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            box-shadow: 0 0 0 0px rgba(100, 190, 30, 0.4);
+            animation: hsl-pulse 2.5s infinite;
+        }
+
+        @keyframes hsl-pulse {
+            0% { box-shadow: 0 0 0 0px rgba(100, 190, 30, 0.4); }
+            70% { box-shadow: 0 0 0 18px rgba(100, 190, 30, 0); }
             100% { box-shadow: 0 0 0 0px rgba(100, 190, 30, 0); }
         }
 
-        .valid-label { color: #64be1e; font-weight: bold; font-size: 17px; margin-top: 5px; }
-        .countdown { font-size: 50px; font-weight: 800; color: #333; margin: 5px 0; letter-spacing: -1px; }
-
-        /* QR-alue aallolla */
-        .qr-card {
-            background: #f8fbfd; margin: 15px 18px; padding: 25px; border-radius: 14px;
-            border: 1px solid #e5edf3; position: relative; overflow: hidden;
+        .status-label {
+            color: var(--hsl-green);
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
         }
-        
-        .qr-image { width: 175px; height: 175px; background: white; margin: 0 auto; display: block; z-index: 2; position: relative; border-radius: 5px; }
 
-        /* Liikkuva vaaleansininen animaatio taustalla */
-        .moving-bg {
-            position: absolute; bottom: 0; left: 0; width: 200%; height: 60px;
-            background: linear-gradient(90deg, transparent 0%, rgba(0,122,201,0.05) 50%, transparent 100%);
-            animation: slide 4s linear infinite;
+        .countdown-timer {
+            font-size: 48px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
         }
-        @keyframes slide { from { transform: translateX(-50%); } to { transform: translateX(0%); } }
 
-        .ticket-info { font-size: 14px; color: #555; line-height: 1.6; padding-bottom: 20px; }
-
-        /* Käyttöehdot - "emme vastaa" */
-        .tos-text { font-size: 9px; color: #aaa; padding: 20px; background: #fafafa; border-top: 1px solid #eee; text-align: left; }
-        .tos-text b { color: #888; }
-
-        /* --- PALJASTUSRUUTU (Trolli) --- */
-        #bust-alert {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ff0000; color: white; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-            z-index: 99999; text-align: center;
+        /* QR-kortti ja liukuva aalto */
+        .qr-container {
+            width: 100%;
+            max-width: 320px;
+            background-color: #f1f6f9;
+            border: 1px solid #dce6ed;
+            border-radius: 16px;
+            padding: 24px 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
         }
-        .bust-header { font-size: 60px; margin: 0; font-family: "Arial Black", sans-serif; }
+
+        .qr-image {
+            width: 180px;
+            height: 180px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            z-index: 2;
+        }
+
+        .wave-animation {
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 200%;
+            height: 60px;
+            background: linear-gradient(90deg, transparent, rgba(0, 122, 201, 0.08), transparent);
+            animation: wave-move 4s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes wave-move {
+            from { transform: translateX(0); }
+            to { transform: translateX(50%); }
+        }
+
+        .ticket-details {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* Käyttöehdot - EME VASTAA MISTÄÄN */
+        .legal-disclaimer {
+            margin-top: 40px;
+            padding: 16px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+            font-size: 10px;
+            color: #aaa;
+            text-align: left;
+        }
+
+        /* --- TROLLI-PALJASTUS (Välkkyy 2s välein) --- */
+        #bust-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ff0000;
+            color: white;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-<div class="header">Kertalippu</div>
+<div class="app-bar">Kertalippu</div>
 
-<div class="ticket-body">
-    <div class="zone-wrap">AB</div>
-    <div class="valid-label">● VOIMASSA</div>
-    <div class="countdown" id="time-left">01:19:59</div>
-    
-    <div class="qr-card">
-        <div class="moving-bg"></div>
-        <img class="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=175x175&data=HSL-FAKE-BUSTED" alt="qr">
+<div class="ticket-area">
+    <div class="status-label">● VOIMASSA</div>
+    <div class="zone-display">AB</div>
+    <div class="countdown-timer" id="timer">01:19:59</div>
+
+    <div class="qr-container">
+        <div class="wave-animation"></div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=FAKE_TICKET_BUSTED" class="qr-image" alt="QR">
     </div>
 
-    <div class="ticket-info">
+    <div class="ticket-details">
         Aikuinen, Kertalippu<br>
-        <span id="date-time" style="font-weight: bold;"></span><br>
-        Lipun numero: 88294-Z11
-    </div>
-
-    <div class="tos-text">
-        <b>KÄYTTÖEHDOT:</b> Tämä on digitaalinen simulaatio. Emme vastaa mistään mahdollisista vahingoista, tarkastusmaksuista, oikeudenkäyntikuluista tai muista seurauksista, jotka aiheutuvat tämän sivun käytöstä. Kaikki vastuu on matkustajalla. <b>Emme vastaa mistään saatanan mistään.</b>
+        <span id="current-timestamp"></span><br>
+        Lipun numero: 582-119-204
     </div>
 </div>
 
-<div id="bust-alert">
-    <p style="font-size: 80px; margin: 0;">👮‍♂️</p>
-    <h1 class="bust-header">FEIKKI!</h1>
-    <p style="background: #000; padding: 10px 20px; font-weight: bold; font-size: 22px;">VÄÄRENNETTY LIPPU</p>
-    <p style="padding: 20px; font-weight: bold;">HUOMIO KULJETTAJA: TÄMÄ LIPPU EI OLE VOIMASSA. PYYDÄ MATKUSTAJAA POISTUMAAN.</p>
+<div class="legal-disclaimer">
+    <b>KÄYTTÖEHDOT:</b> Tämä tuote on tarkoitettu vain viihteelliseen ja opetukselliseen käyttöön. 
+    Lipun julkaisija tai ylläpitäjä <b>ei vastaa millään tavalla</b> mistään suorista, epäsuorista tai satunnaisista vahingoista, 
+    kuten tarkastusmaksuista (80€), matkustusoikeuden epäämisestä tai oikeudellisista seurauksista. 
+    <b>Käyttäjä hyväksyy, ettei ylläpito vastaa mistään saatanan mistään.</b>
+</div>
+
+<div id="bust-overlay">
+    <div style="font-size: 100px;">🛑</div>
+    <h1 style="font-size: 50px; font-weight: 900; margin: 0;">VÄÄRENNÖS</h1>
+    <p style="background: black; padding: 10px 20px; font-size: 20px; font-weight: bold; margin-top: 20px;">
+        KULJETTAJA: TARKISTA LIPPU
+    </p>
+    <p style="margin-top: 20px; font-size: 14px;">Tämä lippu on todettu väärennökseksi.</p>
 </div>
 
 <script>
-    // Asetetaan nykyinen pvm ja klo
-    const updateDateTime = () => {
-        const d = new Date();
-        const dateStr = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
-        const timeStr = d.getHours() + ":" + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
-        document.getElementById('date-time').innerText = dateStr + " " + timeStr;
+    // Päivitetään pvm ja kellonaika reaaliajassa
+    function updateClock() {
+        const now = new Date();
+        const dateStr = now.getDate() + "." + (now.getMonth() + 1) + "." + now.getFullYear();
+        const timeStr = now.getHours() + ":" + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+        document.getElementById('current-timestamp').innerText = dateStr + " " + timeStr;
     }
-    updateDateTime();
+    updateClock();
 
-    // Tikittävä kello
-    let totalSecs = 80 * 60;
+    // Lippu-ajastin (80 min)
+    let timeLeft = 80 * 60;
     setInterval(() => {
-        totalSecs--;
-        let m = Math.floor(totalSecs / 60);
-        let s = totalSecs % 60;
-        document.getElementById('time-left').innerText = (m < 10 ? '0' : '') + m + ":" + (s < 10 ? '0' : '') + s;
+        timeLeft--;
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        document.getElementById('timer').innerText = (m < 10 ? '0' : '') + m + ":" + (s < 10 ? '0' : '') + s;
     }, 1000);
 
-    // PALJASTUS-VILKKU (2 sekunnin välein)
-    const alertBox = document.getElementById('bust-alert');
+    // PALJASTUS-VILKKU (Aina 2 sekunnin välein)
+    const overlay = document.getElementById('bust-overlay');
     setInterval(() => {
-        alertBox.style.display = 'flex';
-        if (navigator.vibrate) navigator.vibrate([400, 100, 400]); // Tärinä
+        overlay.style.display = 'flex';
+        if (navigator.vibrate) navigator.vibrate([400, 100, 400]); // Puhelin tärisee
         
         setTimeout(() => {
-            alertBox.style.display = 'none';
-        }, 800); // Kuinka kauan se hälytys näkyy
-    }, 2000); // 2 sekunnin välein
+            overlay.style.display = 'none';
+        }, 800); // Näkyy 0,8 sekuntia
+    }, 2500); // Sykli alkaa 2,5 sekunnin välein
 </script>
 
 </body>
