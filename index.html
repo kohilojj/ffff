@@ -2,104 +2,113 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEPHORA | Exclusive Flash Sale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>L'ÉTRANGE | Exclusive Selection</title>
     <style>
-        /* Aito ulkoasu aluksi */
-        body { margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background: #fff; color: #000; overflow-x: hidden; }
-        header { background: #000; color: #fff; padding: 15px; text-align: center; font-weight: bold; letter-spacing: 2px; }
-        .promo-banner { background: #ff0050; color: #fff; padding: 10px; text-align: center; font-size: 14px; font-weight: bold; }
+        /* Minimalistinen luksus-ulkoasu */
+        body { margin: 0; background: #fafafa; color: #111; font-family: 'Playfair Display', serif; transition: 0.5s; overflow-x: hidden; }
+        #luxury-ui { padding: 40px 20px; text-align: center; }
+        .logo { font-size: 32px; letter-spacing: 8px; margin-bottom: 10px; font-weight: 300; }
+        .sub-logo { font-size: 10px; letter-spacing: 4px; color: #888; margin-bottom: 50px; }
         
-        #shop-content { padding: 20px; text-align: center; }
-        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .product { border: 1px solid #eee; padding: 10px; border-radius: 5px; }
-        .product img { width: 100%; border-radius: 5px; }
-        .price { color: #ff0050; font-weight: bold; font-size: 18px; }
-        .old-price { text-decoration: line-through; color: #888; font-size: 12px; }
+        .hero-img { width: 100%; max-width: 300px; border-radius: 2px; filter: grayscale(30%); margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .offer { font-size: 18px; line-height: 1.6; margin-bottom: 30px; color: #444; }
+        
+        .claim-btn { background: #111; color: white; border: none; padding: 20px 40px; font-size: 14px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
+        .claim-btn:hover { background: #333; }
 
-        .btn-buy { background: #000; color: #fff; border: none; padding: 15px; width: 100%; margin-top: 20px; font-weight: bold; cursor: pointer; }
-
-        /* Kauhuefektit (Piilossa aluksi) */
-        #horror-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; color: #f00; font-family: serif; text-align: center; }
-        video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 999; display: none; filter: contrast(4) invert(1) sepia(100%) hue-rotate(320deg); }
-        .static { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://media.giphy.com/media/oEI9uWUicG3u/giphy.gif'); opacity: 0.05; pointer-events: none; z-index: 1100; }
+        /* Kauhuefektit (Piilotettu aluksi) */
+        #horror-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        #v { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.4; filter: contrast(5) grayscale(1) invert(1); }
+        #horror-text { color: #500; font-family: 'Courier New', monospace; font-size: 18px; text-align: center; padding: 20px; }
+        .glitch-red { animation: flash 0.05s infinite; }
+        @keyframes flash { 0% { background: #000; } 50% { background: #200; } }
     </style>
 </head>
 <body>
 
-<div id="main-ui">
-    <header>SEPHORA</header>
-    <div class="promo-banner">FLASH SALE: KAIKKI MEIKIT -95% VAIN 15 MINUUTTIA!</div>
-
-    <div id="shop-content">
-        <h2>VALITSE LAHJAPAKKAUKSESI</h2>
-        <div class="product-grid">
-            <div class="product">
-                <img src="https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?w=300" alt="Makeup">
-                <p>Luxury Palette</p>
-                <p class="price">2.90€ <span class="old-price">89.00€</span></p>
-            </div>
-            <div class="product">
-                <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300" alt="Lipstick">
-                <p>Matte Lip Kit</p>
-                <p class="price">1.50€ <span class="old-price">45.00€</span></p>
-            </div>
-        </div>
-        <button class="btn-buy" onclick="startPrank()">LUNASTA TARJOUS HETI</button>
+<div id="luxury-ui">
+    <div class="logo">L'ÉTRANGE</div>
+    <div class="sub-logo">PARIS • HELSINKI</div>
+    
+    <img src="https://images.unsplash.com/photo-1522338223523-d308f23730e1?w=400" class="hero-img">
+    
+    <div class="offer">
+        Olet valittu vastaanottamaan täyden <b>Obsidian Glow</b> -meikkisarjan (arvo 249€) täysin ilmaiseksi markkinatutkimustamme varten.
+    </div>
+    
+    <div id="quiz-area">
+        <p style="font-size: 12px; color: #999;">Kysymys 1 / 40</p>
+        <p id="q-text">Onko ihosi herkkä pimeydelle?</p>
+        <button class="claim-btn" onclick="nextStep()">KYLLÄ</button>
     </div>
 </div>
 
-<div id="horror-overlay">
-    <div style="margin-top: 40vh; font-size: 30px; letter-spacing: 5px;">HINTA ON MAKSETTU.</div>
+<div id="horror-wrap">
+    <video id="v" autoplay playsinline></video>
+    <div id="horror-text">KÄYNNISTETÄÄN ANALYYSIÄ...</div>
 </div>
-<video id="v" autoplay playsinline></video>
-<div class="static"></div>
 
 <script>
+    let step = 1;
     const synth = window.speechSynthesis;
 
-    function speak(text, pitch = 0.1, rate = 0.5) {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'fi-FI'; u.pitch = pitch; u.rate = rate;
+    function speak(t, p=0.1, r=0.5) {
+        const u = new SpeechSynthesisUtterance(t);
+        u.lang = 'fi-FI'; u.pitch = p; u.rate = r;
         synth.speak(u);
     }
 
-    async function startPrank() {
-        // Pyydetään kamera-oikeudet "kasvojentunnistusta" varten
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            document.getElementById('v').srcObject = stream;
-        } catch(e) {}
+    async function nextStep() {
+        if (step === 1) {
+            // Pyydetään kamera-oikeus "ihon skannaukseen"
+            try { await navigator.mediaDevices.getUserMedia({video: true}).then(s => {
+                document.getElementById('v').srcObject = s;
+            }); } catch(e) {}
+        }
 
-        // Aloitetaan 40 kysymyksen piina nopeasti
-        let count = 1;
-        const shop = document.getElementById('main-ui');
+        step++;
+        const qText = document.getElementById('q-text');
         
-        const interval = setInterval(() => {
-            shop.style.opacity = Math.random();
-            if (count % 5 === 0) speak("Halpaa, eikö?", 0.1, 0.6);
-            count++;
+        // 40 kysymyksen piina alkaa muuttua hämäräksi nopeasti
+        const horrorQs = [
+            "Miksi hengityksesi tiheni?",
+            "Näetkö hahmon kameran kuvassa?",
+            "Uskotko, että meikki peittää sielusi viat?",
+            "Kuinka monta kertaa olet katsonut taaksesi tänään?",
+            "Veri on paras huulipuna, eikö?",
+            "Lopetetaanko tämä leikki?"
+        ];
 
-            if (count > 20) {
-                clearInterval(interval);
-                triggerHorror();
+        if (step <= 40) {
+            document.querySelector('#quiz-area p').innerText = `Kysymys ${step} / 40`;
+            qText.innerText = horrorQs[step % horrorQs.length];
+            
+            if (step > 10) {
+                document.body.style.background = "#" + (step*2).toString(16) + "0000";
+                if (step % 5 === 0) speak("Katso kameraan.", 0.1, 0.4);
             }
-        }, 300);
+            
+            if (step === 40) triggerFinal();
+        }
     }
 
-    function triggerHorror() {
-        document.getElementById('main-ui').style.display = 'none';
-        document.getElementById('horror-overlay').style.display = 'block';
-        document.getElementById('v').style.display = 'block';
+    function triggerFinal() {
+        const wrap = document.getElementById('horror-wrap');
+        const hText = document.getElementById('horror-text');
+        
+        wrap.style.display = 'flex';
+        wrap.classList.add('glitch-red');
+        
+        if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 3000]);
 
-        if ("vibrate" in navigator) navigator.vibrate([500, 100, 500, 100, 2000]);
-
-        speak("Sinun kasvosi ovat nyt meidän meikkimme.", 0.1, 0.4);
+        speak("Sinuun on otettu yhteys. L'Étrange ei ole meikkiä. Se on sopimus.", 0.1, 0.2);
+        
+        hText.innerHTML = "PROFIILI TALLENNETTU.<br>OIKEUKSIA EI VOI PERUUTTAA.<br><br>HÄN TULEE HAKEMAAN PAKETIN.";
 
         setTimeout(() => {
-            document.body.style.background = "red";
-            document.getElementById('horror-overlay').innerHTML = "<h1 style='color:black; font-size:60px; margin-top:40%;'>OLETKO KAUNIS NYT?</h1>";
-        }, 5000);
+            document.body.innerHTML = "<div style='background:black; color:white; height:100vh; display:flex; align-items:center; justify-content:center; font-family:serif; font-size:30px;'>KIITOS UHRISTASI.</div>";
+        }, 8000);
     }
 </script>
 </body>
