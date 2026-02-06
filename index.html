@@ -2,113 +2,103 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>L'ÉTRANGE | Exclusive Selection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLOW | Exclusive Giveaway</title>
     <style>
-        /* Minimalistinen luksus-ulkoasu */
-        body { margin: 0; background: #fafafa; color: #111; font-family: 'Playfair Display', serif; transition: 0.5s; overflow-x: hidden; }
-        #luxury-ui { padding: 40px 20px; text-align: center; }
-        .logo { font-size: 32px; letter-spacing: 8px; margin-bottom: 10px; font-weight: 300; }
-        .sub-logo { font-size: 10px; letter-spacing: 4px; color: #888; margin-bottom: 50px; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: #fff5f7; color: #333; text-align: center; }
+        #header { background: #fff; padding: 20px; border-bottom: 1px solid #ffe0e9; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #ff85a2; }
         
-        .hero-img { width: 100%; max-width: 300px; border-radius: 2px; filter: grayscale(30%); margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .offer { font-size: 18px; line-height: 1.6; margin-bottom: 30px; color: #444; }
+        .container { padding: 30px 20px; max-width: 400px; margin: auto; }
+        .hero-img { width: 100%; border-radius: 15px; margin-bottom: 20px; }
+        .promo-tag { background: #ff4d7d; color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
         
-        .claim-btn { background: #111; color: white; border: none; padding: 20px 40px; font-size: 14px; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
-        .claim-btn:hover { background: #333; }
+        h2 { font-size: 20px; margin-bottom: 10px; }
+        p { font-size: 14px; color: #666; margin-bottom: 20px; }
 
-        /* Kauhuefektit (Piilotettu aluksi) */
-        #horror-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        #v { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.4; filter: contrast(5) grayscale(1) invert(1); }
-        #horror-text { color: #500; font-family: 'Courier New', monospace; font-size: 18px; text-align: center; padding: 20px; }
-        .glitch-red { animation: flash 0.05s infinite; }
-        @keyframes flash { 0% { background: #000; } 50% { background: #200; } }
+        .q-box { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(255,133,162,0.15); }
+        .btn { background: #ff85a2; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn:active { transform: scale(0.95); }
+
+        /* Pränkki-elementit */
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #ff85a2; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="luxury-ui">
-    <div class="logo">L'ÉTRANGE</div>
-    <div class="sub-logo">PARIS • HELSINKI</div>
-    
+<div id="header"><div class="logo">GLOW</div></div>
+
+<div class="container" id="main-content">
+    <div class="promo-tag">RAJOITETTU ERÄ</div>
     <img src="https://images.unsplash.com/photo-1522338223523-d308f23730e1?w=400" class="hero-img">
-    
-    <div class="offer">
-        Olet valittu vastaanottamaan täyden <b>Obsidian Glow</b> -meikkisarjan (arvo 249€) täysin ilmaiseksi markkinatutkimustamme varten.
-    </div>
-    
-    <div id="quiz-area">
-        <p style="font-size: 12px; color: #999;">Kysymys 1 / 40</p>
-        <p id="q-text">Onko ihosi herkkä pimeydelle?</p>
-        <button class="claim-btn" onclick="nextStep()">KYLLÄ</button>
+    <h2>LUNASTA LUXURY-BOXI (0.00€)</h2>
+    <p>Vastaa 40 kysymykseen saadaksesi kotiinkuljetetun meikkisetin ilmaiseksi.</p>
+
+    <div class="q-box">
+        <p id="q-counter" style="font-weight: bold; color: #ff85a2;">Kysymys 1 / 40</p>
+        <p id="q-text">Mikä on ihotyyppisi?</p>
+        <button class="btn" onclick="nextQuestion()">Kuiva / Normaali</button>
+        <button class="btn" onclick="nextQuestion()">Rasvoittuva / Sekaiho</button>
     </div>
 </div>
 
-<div id="horror-wrap">
-    <video id="v" autoplay playsinline></video>
-    <div id="horror-text">KÄYNNISTETÄÄN ANALYYSIÄ...</div>
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <h3 id="load-text">Tarkistetaan varastotilannetta...</h3>
 </div>
 
 <script>
     let step = 1;
-    const synth = window.speechSynthesis;
 
-    function speak(t, p=0.1, r=0.5) {
-        const u = new SpeechSynthesisUtterance(t);
-        u.lang = 'fi-FI'; u.pitch = p; u.rate = r;
-        synth.speak(u);
-    }
-
-    async function nextStep() {
-        if (step === 1) {
-            // Pyydetään kamera-oikeus "ihon skannaukseen"
-            try { await navigator.mediaDevices.getUserMedia({video: true}).then(s => {
-                document.getElementById('v').srcObject = s;
-            }); } catch(e) {}
-        }
-
+    function nextQuestion() {
         step++;
-        const qText = document.getElementById('q-text');
         
-        // 40 kysymyksen piina alkaa muuttua hämäräksi nopeasti
-        const horrorQs = [
-            "Miksi hengityksesi tiheni?",
-            "Näetkö hahmon kameran kuvassa?",
-            "Uskotko, että meikki peittää sielusi viat?",
-            "Kuinka monta kertaa olet katsonut taaksesi tänään?",
-            "Veri on paras huulipuna, eikö?",
-            "Lopetetaanko tämä leikki?"
-        ];
+        if (step === 10) {
+            showFakeLoading("Varmistetaan ikäsi...", 2000);
+        } else if (step === 25) {
+            showFakeLoading("Valmistellaan pakettia...", 3000);
+        } else if (step === 39) {
+            showFakeLoading("VARATTU! Viimeistellään...", 4000);
+        }
 
         if (step <= 40) {
-            document.querySelector('#quiz-area p').innerText = `Kysymys ${step} / 40`;
-            qText.innerText = horrorQs[step % horrorQs.length];
-            
-            if (step > 10) {
-                document.body.style.background = "#" + (step*2).toString(16) + "0000";
-                if (step % 5 === 0) speak("Katso kameraan.", 0.1, 0.4);
-            }
-            
-            if (step === 40) triggerFinal();
+            document.getElementById('q-counter').innerText = `Kysymys ${step} / 40`;
+            const randomQs = [
+                "Kuinka usein käytät meikkiä?",
+                "Mikä on lempivärisi huulipunassa?",
+                "Haluatko kimalletta vai mattaa?",
+                "Onko kestävyys sinulle tärkeää?",
+                "Käytätkö primeria?",
+                "Mikä on meikkirutiinisi pituus?"
+            ];
+            document.getElementById('q-text').innerText = randomQs[step % randomQs.length];
+        } else {
+            finishPrank();
         }
     }
 
-    function triggerFinal() {
-        const wrap = document.getElementById('horror-wrap');
-        const hText = document.getElementById('horror-text');
-        
-        wrap.style.display = 'flex';
-        wrap.classList.add('glitch-red');
-        
-        if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 3000]);
-
-        speak("Sinuun on otettu yhteys. L'Étrange ei ole meikkiä. Se on sopimus.", 0.1, 0.2);
-        
-        hText.innerHTML = "PROFIILI TALLENNETTU.<br>OIKEUKSIA EI VOI PERUUTTAA.<br><br>HÄN TULEE HAKEMAAN PAKETIN.";
-
+    function showFakeLoading(text, time) {
+        const overlay = document.getElementById('loading-overlay');
+        document.getElementById('load-text').innerText = text;
+        overlay.style.display = 'flex';
         setTimeout(() => {
-            document.body.innerHTML = "<div style='background:black; color:white; height:100vh; display:flex; align-items:center; justify-content:center; font-family:serif; font-size:30px;'>KIITOS UHRISTASI.</div>";
-        }, 8000);
+            overlay.style.display = 'none';
+        }, time);
+    }
+
+    function finishPrank() {
+        document.getElementById('main-content').innerHTML = `
+            <div style="padding: 40px; background: white; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                <h1 style="font-size: 50px;">🤡</h1>
+                <h2>OIKEESTI?</h2>
+                <p>Vastasit oikeesti 40 kysymykseen meikkien takia...</p>
+                <p><b>Sua on pränkätty!</b></p>
+                <p>Tää oli feikki. Ei täällä oo mitään meikkejä.</p>
+                <button class="btn" onclick="location.reload()">Oonpa nolo, yritä uudestaan</button>
+            </div>
+        `;
     }
 </script>
 </body>
