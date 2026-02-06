@@ -3,100 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLOW | Exclusive Giveaway</title>
+    <title>Kuluttajapaneeli | Tuotetesti</title>
     <style>
-        body { margin: 0; font-family: 'Poppins', sans-serif; background: #fff5f7; color: #333; text-align: center; }
-        #header { background: #fff; padding: 20px; border-bottom: 1px solid #ffe0e9; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .logo { font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #ff85a2; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f4f4; color: #333; line-height: 1.5; }
+        .top-bar { background: #333; color: white; padding: 10px; font-size: 12px; text-align: center; }
         
-        .container { padding: 30px 20px; max-width: 400px; margin: auto; }
-        .hero-img { width: 100%; border-radius: 15px; margin-bottom: 20px; }
-        .promo-tag { background: #ff4d7d; color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        .container { max-width: 500px; margin: 20px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        h2 { font-size: 20px; margin-bottom: 10px; }
-        p { font-size: 14px; color: #666; margin-bottom: 20px; }
+        /* Rikkinäinen kuva -efekti */
+        .img-placeholder { width: 100%; height: 200px; background: #eee; border: 1px dashed #ccc; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; margin-bottom: 20px; }
+        .img-placeholder span { font-size: 40px; }
 
-        .q-box { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(255,133,162,0.15); }
-        .btn { background: #ff85a2; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn:active { transform: scale(0.95); }
+        h1 { font-size: 22px; margin-bottom: 10px; color: #000; }
+        .desc { font-size: 14px; margin-bottom: 20px; border-left: 3px solid #ccc; padding-left: 10px; }
 
-        /* Pränkki-elementit */
-        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #ff85a2; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .quiz-area { border-top: 1px solid #eee; padding-top: 20px; }
+        #q-text { font-weight: bold; margin-bottom: 15px; display: block; }
+        
+        .btn { display: block; width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; background: #fff; border-radius: 5px; cursor: pointer; text-align: left; font-size: 15px; }
+        .btn:hover { background: #f9f9f9; border-color: #bbb; }
+        
+        #progress-bar { height: 5px; background: #eee; margin-bottom: 20px; border-radius: 10px; overflow: hidden; }
+        #progress-fill { height: 100%; background: #4CAF50; width: 2.5%; transition: 0.3s; }
     </style>
 </head>
 <body>
 
-<div id="header"><div class="logo">GLOW</div></div>
+<div class="top-bar">TUOTETESTAAJAT VALITTU: 482 / 500</div>
 
-<div class="container" id="main-content">
-    <div class="promo-tag">RAJOITETTU ERÄ</div>
-    <img src="https://images.unsplash.com/photo-1522338223523-d308f23730e1?w=400" class="hero-img">
-    <h2>LUNASTA LUXURY-BOXI (0.00€)</h2>
-    <p>Vastaa 40 kysymykseen saadaksesi kotiinkuljetetun meikkisetin ilmaiseksi.</p>
-
-    <div class="q-box">
-        <p id="q-counter" style="font-weight: bold; color: #ff85a2;">Kysymys 1 / 40</p>
-        <p id="q-text">Mikä on ihotyyppisi?</p>
-        <button class="btn" onclick="nextQuestion()">Kuiva / Normaali</button>
-        <button class="btn" onclick="nextQuestion()">Rasvoittuva / Sekaiho</button>
+<div class="container">
+    <div class="img-placeholder">
+        <span>🖼️</span>
+        <small>Kuvaa ei voitu ladata (Virhe 404)</small>
     </div>
-</div>
 
-<div id="loading-overlay">
-    <div class="spinner"></div>
-    <h3 id="load-text">Tarkistetaan varastotilannetta...</h3>
+    <h1>Testaa & Pidä: Everyday Essentials -setti</h1>
+    <div class="desc">
+        Etsimme 18-35 vuotiaita testaajia uudelle perusmeikkisetille. Saat tuotteet kotiin ja täytettyäsi 40 palautekysymystä, saat pitää setin (arvo n. 45€).
+    </div>
+
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+
+    <div class="quiz-area" id="quiz-content">
+        <span id="q-text">Kysymys 1 / 40: Kuinka usein ostat uusia meikkejä?</span>
+        <button class="btn" onclick="next()">Viikoittain</button>
+        <button class="btn" onclick="next()">Kuukausittain</button>
+        <button class="btn" onclick="next()">Harvemmin kuin kerran kuussa</button>
+    </div>
 </div>
 
 <script>
     let step = 1;
+    const questions = [
+        "Minkä merkkisiä tuotteita käytät tällä hetkellä?",
+        "Mikä on tärkein ominaisuus päivävoiteessa?",
+        "Oletko valmis antamaan rehellistä palautetta?",
+        "Käytätkö yleensä vedenkestävää ripsiväriä?",
+        "Onko pakkauksen ulkonäkö sinulle tärkeä?",
+        "Suositko hajusteettomia tuotteita?",
+        "Mistä yleensä ostat meikkisi?"
+    ];
 
-    function nextQuestion() {
-        step++;
-        
-        if (step === 10) {
-            showFakeLoading("Varmistetaan ikäsi...", 2000);
-        } else if (step === 25) {
-            showFakeLoading("Valmistellaan pakettia...", 3000);
-        } else if (step === 39) {
-            showFakeLoading("VARATTU! Viimeistellään...", 4000);
-        }
-
-        if (step <= 40) {
-            document.getElementById('q-counter').innerText = `Kysymys ${step} / 40`;
-            const randomQs = [
-                "Kuinka usein käytät meikkiä?",
-                "Mikä on lempivärisi huulipunassa?",
-                "Haluatko kimalletta vai mattaa?",
-                "Onko kestävyys sinulle tärkeää?",
-                "Käytätkö primeria?",
-                "Mikä on meikkirutiinisi pituus?"
-            ];
-            document.getElementById('q-text').innerText = randomQs[step % randomQs.length];
+    function next() {
+        if (step < 40) {
+            step++;
+            document.getElementById('q-text').innerText = `Kysymys ${step} / 40: ${questions[step % questions.length]}`;
+            document.getElementById('progress-fill').style.width = (step / 40 * 100) + "%";
+            
+            // Pidetään huoli, että uhri ei luovuta
+            if (step === 30) {
+                alert("Melkein valmista! Vain 10 kysymystä jäljellä, niin pääset syöttämään osoitteesi.");
+            }
         } else {
-            finishPrank();
+            showPrank();
         }
     }
 
-    function showFakeLoading(text, time) {
-        const overlay = document.getElementById('loading-overlay');
-        document.getElementById('load-text').innerText = text;
-        overlay.style.display = 'flex';
-        setTimeout(() => {
-            overlay.style.display = 'none';
-        }, time);
-    }
-
-    function finishPrank() {
-        document.getElementById('main-content').innerHTML = `
-            <div style="padding: 40px; background: white; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
-                <h1 style="font-size: 50px;">🤡</h1>
-                <h2>OIKEESTI?</h2>
-                <p>Vastasit oikeesti 40 kysymykseen meikkien takia...</p>
-                <p><b>Sua on pränkätty!</b></p>
-                <p>Tää oli feikki. Ei täällä oo mitään meikkejä.</p>
-                <button class="btn" onclick="location.reload()">Oonpa nolo, yritä uudestaan</button>
+    function showPrank() {
+        document.querySelector('.container').innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <h1 style="font-size: 60px;">🤡</h1>
+                <h2 style="color:red;">Sua on pränkätty kunnolla!</h2>
+                <p>Vastasit oikeesti <b>neljäänkymmeneen</b> kysymykseen saadaksesi ilmasen meikkisetin...</p>
+                <p>Arvaa mitä? Ei täällä oo mitään meikkejä. <br><br> Terveisin: Sun kaveris.</p>
+                <button class="btn" style="text-align:center; background:#000; color:#fff;" onclick="location.reload()">Oon nolo, myönnetään</button>
             </div>
         `;
     }
