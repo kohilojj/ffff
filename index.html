@@ -2,156 +2,120 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tinder-Akatemia: Treffi-Mestari</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jassu & Jepu: AI Suhdeterapeutti</title>
     <style>
-        :root { --tinder-pink: #fe3c72; --gold: #ffd700; --bg: #f0f2f5; }
-        body { margin: 0; background: var(--bg); font-family: -apple-system, sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        :root { --serene-blue: #005a9e; --soft-gray: #f4f7f6; --tinder-pink: #fe3c72; }
+        body { margin: 0; background: var(--soft-gray); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; height: 100vh; }
         
-        /* Mittarit */
-        #stat-bar { background: white; padding: 15px; display: flex; justify-content: space-around; border-bottom: 2px solid #ddd; font-weight: bold; font-size: 14px; }
-        #charm-bar-container { width: 100%; height: 10px; background: #ddd; }
-        #charm-fill { height: 100%; background: var(--tinder-pink); width: 0%; transition: 0.5s; }
+        /* Header */
+        #header { background: white; padding: 20px; text-align: center; border-bottom: 2px solid #ddd; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        #header h1 { margin: 0; font-size: 18px; color: var(--serene-blue); text-transform: uppercase; letter-spacing: 1px; }
 
-        #chat-history { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: white; }
-        .msg { padding: 12px 16px; border-radius: 20px; max-width: 75%; font-size: 15px; }
-        .msg.me { align-self: flex-end; background: var(--tinder-pink); color: white; }
-        .msg.them { align-self: flex-start; background: #e9e9eb; color: black; }
+        /* Chat-ikkuna */
+        #chat-display { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .msg { padding: 15px 20px; border-radius: 15px; max-width: 85%; line-height: 1.5; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .user-msg { align-self: flex-end; background: var(--serene-blue); color: white; border-bottom-right-radius: 2px; }
+        .ai-msg { align-self: flex-start; background: white; color: #333; border-bottom-left-radius: 2px; border: 1px solid #eee; }
 
-        #options-container { height: 300px; overflow-y: auto; background: #fff; padding: 10px; border-top: 1px solid #ddd; display: grid; gap: 8px; }
-        .option { padding: 12px; border-radius: 12px; border: 1px solid #ddd; background: #f8f9fa; font-size: 14px; cursor: pointer; }
-        .option:hover { border-color: var(--tinder-pink); background: #fff5f7; }
+        /* Syöttökenttä */
+        #input-container { background: white; padding: 20px; border-top: 1px solid #ddd; display: flex; gap: 10px; }
+        #user-input { flex-grow: 1; padding: 12px 20px; border: 1px solid #ccc; border-radius: 30px; outline: none; font-size: 16px; }
+        #send-btn { background: var(--serene-blue); color: white; border: none; padding: 12px 25px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        #send-btn:hover { background: #004a87; }
 
-        /* Palaute-ikkuna */
-        #coach-feedback {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 2000; color: white; padding: 20px;
-        }
-        .feedback-card { background: white; color: black; padding: 25px; border-radius: 25px; max-width: 320px; text-align: center; }
-        .feedback-card img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--tinder-pink); margin-bottom: 15px; }
-        
-        #victory-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--gold); display: none; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 3000; text-align: center;
-        }
+        /* Valmennus-panelit */
+        .status-badge { font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 10px; margin-bottom: 5px; display: inline-block; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-success { background: #d4edda; color: #155724; }
     </style>
 </head>
 <body>
 
-<div id="stat-bar">
-    <span>💎 Taso: <span id="rank">Aloittelija</span></span>
-    <span>🏆 Charm: <span id="charm-val">0</span>/200</span>
-</div>
-<div id="charm-bar-container"><div id="charm-fill"></div></div>
-
-<div id="chat-history">
-    <div class="msg them">Moi! Sulla oli tosi mielenkiintoinen profiili. Mitäs sä tykkäät tehdä vapaa-ajalla? 😊</div>
+<div id="header">
+    <h1>AI-Suhdeterapeutti <span style="font-size: 12px; color: gray;">Powered by Jassu & Jepu</span></h1>
+    <div style="font-size: 12px; color: #666; margin-top: 5px;">Harjoittele Tinder-keskusteluja tai kysy neuvoa.</div>
 </div>
 
-<div id="options-container"></div>
-
-<div id="coach-feedback">
-    <div class="feedback-card">
-        <img id="coach-img" src="jassu.png">
-        <h3 id="coach-title">Jassun Vinkki</h3>
-        <p id="coach-txt"></p>
-        <button onclick="closeFeedback()" style="background:var(--tinder-pink); color:white; border:none; padding:12px 25px; border-radius:15px; font-weight:bold; cursor:pointer;">Yritän uudestaan!</button>
+<div id="chat-display">
+    <div class="msg ai-msg">
+        <b>Suhdeterapeutti:</b> Tervetuloa. Olen täällä auttamassa sinua kehittymään ihmissuhteissa ja Tinder-viestinnässä. <br><br>
+        Voit kertoa minulle, mitä aiot sanoa matchillesi, tai pyytää neuvoa tiettyyn tilanteeseen. Jassu ja Jepu seuraavat analyysiani.
     </div>
 </div>
 
-<div id="victory-screen">
-    <h1 style="font-size: 50px;">TREFFIT sovittu! 🥂</h1>
-    <p style="font-size: 20px; font-weight: bold;">Sait tyttöystävän (pelissä)!</p>
-    <div style="display:flex; gap:10px; margin:20px;">
-        <img src="jassu.png" width="70">
-        <img src="jepu.png" width="70">
-    </div>
-    <button onclick="location.reload()" style="padding:15px 30px; border-radius:30px; border:none; background:white; font-weight:bold;">PELAA UUDESTAAN</button>
+<div id="input-container">
+    <input type="text" id="user-input" placeholder="Kirjoita viestisi tässä..." autocomplete="off">
+    <button id="send-btn" onclick="sendMessage()">ANALYYSI</button>
 </div>
 
 <script>
-    let score = 0;
-    const history = document.getElementById('chat-history');
-    const optionsCont = document.getElementById('options-container');
+    const chatDisplay = document.getElementById('chat-display');
+    const userInput = document.getElementById('user-input');
 
-    // VIESTIPAKETIT
-    const stages = {
-        chatting: [
-            { t: "Tykkään urheilla ja ulkoilla, entä sä? 🏃‍♂️", type: 'good', pts: 40 },
-            { t: "Vähän kaikkea, mut kokkaaminen on mun juttu! 🍳", type: 'good', pts: 40 },
-            { t: "Oot hyvän näköinen ja sulla on isot tisit.", type: 'bad', f: "Jepu: EI! Tämä on törkeää. Nainen haluaa tulla kohdelluksi ihmisenä, ei esineenä. Pisteet laskee!" },
-            { t: "En mitään ihmeellistä, tylsää on.", type: 'bad', f: "Jassu: Älä ole tylsä! Kukaan ei halua tyttöystäväksi ihmistä, jolla ei ole intohimoja." }
-        ],
-        dating: [
-            { t: "Haluaisitko mennä ensi viikolla kävelylle ja kahville? ☕", type: 'good', pts: 100 },
-            { t: "Tiedän yhden tosi kivan paikan, mentäiskö sinne syömään? 🍕", type: 'good', pts: 100 },
-            { t: "Tuu mun luo yöksi, katsotaan leffaa.", type: 'bad', f: "Jepu: STOP! Tämä on liian suoraa. Useimmat naiset kokevat tämän ahdistavaksi ensimmäisenä ehdotuksena." },
-            { t: "Mennäänkö sun luo?", type: 'bad', f: "Jassu: Todella huono idea. Ehdota aina jotain julkista paikkaa ensimmäisille treffeille, se on turvallisempaa." }
-        ]
-    };
+    function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
 
-    function renderOptions() {
-        optionsCont.innerHTML = "";
-        let currentPool = score >= 80 ? stages.dating : stages.chatting;
+        addMessage(text, 'user-msg');
+        userInput.value = '';
+
+        // Simuloidaan "älykästä" analyysia
+        setTimeout(() => {
+            const analysis = analyzeMessage(text);
+            addMessage(analysis, 'ai-msg');
+        }, 800);
+    }
+
+    function addMessage(text, className) {
+        const div = document.createElement('div');
+        div.className = `msg ${className}`;
+        div.innerHTML = text;
+        chatDisplay.appendChild(div);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+    }
+
+    function analyzeMessage(msg) {
+        const input = msg.toLowerCase();
         
-        currentPool.forEach(opt => {
-            const btn = document.createElement('div');
-            btn.className = 'option';
-            btn.innerText = opt.t;
-            btn.onclick = () => select(opt);
-            optionsCont.appendChild(btn);
-        });
-    }
-
-    function select(opt) {
-        addMsg(opt.t, 'me');
-        if (opt.type === 'bad') {
-            setTimeout(() => {
-                const isJassu = Math.random() > 0.5;
-                document.getElementById('coach-img').src = isJassu ? 'jassu.png' : 'jepu.png';
-                document.getElementById('coach-txt').innerText = opt.f;
-                document.getElementById('coach-feedback').style.display = 'flex';
-                score = Math.max(0, score - 30);
-                updateUI();
-            }, 700);
-        } else {
-            score += opt.pts;
-            updateUI();
-            if (score >= 200) {
-                setTimeout(() => document.getElementById('victory-screen').style.display = 'flex', 1000);
-            } else {
-                setTimeout(() => {
-                    const ans = score >= 120 ? "Vitsi toi kuulostaa kivalta, mennään vaan! 😍" : "Kuulostaa kivalta! Kerro lisää? 😊";
-                    addMsg(ans, 'them');
-                    renderOptions();
-                }, 1000);
-            }
+        // 1. TÖRKEÄT JA AHISTELEVAT (Suhdeterapeutin vakava palaute)
+        if (input.includes("tisit") || input.includes("yöksi") || input.includes("alasti") || input.includes("pillu")) {
+            return `
+                <span class="status-badge badge-warning">VAROITUS: Epäkunnioittava sävy</span><br>
+                <b>Terapeutin analyysi:</b> Tämä viesti on erittäin ongelmallinen. Lähestyt vastapuolta pelkkänä objektina. <br><br>
+                <b>Jepun vinkki:</b> Jätä tällaiset jutut kokonaan pois. Jos haluat oikean suhteen, sinun on osoitettava, että arvostat ihmisen luonnetta ja rajoja.
+            `;
         }
+
+        // 2. TYLSÄT JA PASSIVISET
+        if (input.length < 5 || input === "moi" || input === "mitä kuuluu") {
+            return `
+                <span class="status-badge">HUOMIO: Matala kiinnostavuus</span><br>
+                <b>Terapeutin analyysi:</b> Viestisi on turvallinen, mutta hyvin yleinen. Se ei erotu sadoista muista viesteistä.<br><br>
+                <b>Jassun vinkki:</b> Yritä löytää hänen profiilistaan jokin yksityiskohta (esim. lemmikki tai matkakohde) ja kysy siitä jotain tarkempaa.
+            `;
+        }
+
+        // 3. HYVÄT JA RAKENTAVAT
+        if (input.includes("itse") || input.includes("harrastat") || input.includes("kiva") || input.includes("profiili")) {
+            return `
+                <span class="status-badge badge-success">ERINOMAINEN: Rakentava avaus</span><br>
+                <b>Terapeutin analyysi:</b> Olet osoittanut aitoa mielenkiintoa ja avannut keskustelun herrasmiesmäisesti. Tämä luo turvallisen tilan keskustelulle.<br><br>
+                <b>Jassun vinkki:</b> Loistavaa! Nyt olet oikealla polulla kohti onnistuneita treffejä. Jatka kuuntelemista ja ole oma itsesi.
+            `;
+        }
+
+        // 4. GENEERINEN AI-VASTAUS
+        return `
+            <b>Terapeutin analyysi:</b> Viestisi on neutraali. Se ei loukkaa, mutta se voisi olla hieman persoonallisempi. <br><br>
+            Haluatko, että autan muotoilemaan tästä jotain, mikä saisi hänet hymyilemään?
+        `;
     }
 
-    function addMsg(t, s) {
-        const b = document.createElement('div');
-        b.className = `msg ${s}`;
-        b.innerText = t;
-        history.appendChild(b);
-        history.scrollTop = history.scrollHeight;
-    }
-
-    function updateUI() {
-        document.getElementById('charm-val').innerText = score;
-        document.getElementById('charm-fill').style.width = Math.min(100, (score/200)*100) + "%";
-        if(score >= 80) document.getElementById('rank').innerText = "Charmantti";
-        if(score >= 150) document.getElementById('rank').innerText = "Treffikuningas";
-    }
-
-    function closeFeedback() {
-        document.getElementById('coach-feedback').style.display = 'none';
-        renderOptions();
-    }
-
-    renderOptions();
+    userInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+    });
 </script>
+
 </body>
 </html>
