@@ -7,86 +7,91 @@
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background: #f4f4f4; color: #333; line-height: 1.5; }
         .top-bar { background: #333; color: white; padding: 10px; font-size: 12px; text-align: center; }
-        
         .container { max-width: 500px; margin: 20px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        
-        /* Rikkinäinen kuva -efekti */
         .img-placeholder { width: 100%; height: 200px; background: #eee; border: 1px dashed #ccc; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; margin-bottom: 20px; }
-        .img-placeholder span { font-size: 40px; }
-
         h1 { font-size: 22px; margin-bottom: 10px; color: #000; }
         .desc { font-size: 14px; margin-bottom: 20px; border-left: 3px solid #ccc; padding-left: 10px; }
-
         .quiz-area { border-top: 1px solid #eee; padding-top: 20px; }
-        #q-text { font-weight: bold; margin-bottom: 15px; display: block; }
-        
+        #q-text { font-weight: bold; margin-bottom: 15px; display: block; min-height: 50px; }
         .btn { display: block; width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; background: #fff; border-radius: 5px; cursor: pointer; text-align: left; font-size: 15px; }
         .btn:hover { background: #f9f9f9; border-color: #bbb; }
-        
-        #progress-bar { height: 5px; background: #eee; margin-bottom: 20px; border-radius: 10px; overflow: hidden; }
-        #progress-fill { height: 100%; background: #4CAF50; width: 2.5%; transition: 0.3s; }
+        #progress-bar { height: 8px; background: #eee; margin-bottom: 20px; border-radius: 10px; overflow: hidden; }
+        #progress-fill { height: 100%; background: #ff85a2; width: 2.5%; transition: 0.2s; }
     </style>
 </head>
 <body>
 
-<div class="top-bar">TUOTETESTAAJAT VALITTU: 482 / 500</div>
+<div class="top-bar">AVOIMIA PAIKKOJA JÄLJELLÄ: 14 / 500</div>
 
 <div class="container">
     <div class="img-placeholder">
         <span>🖼️</span>
-        <small>Kuvaa ei voitu ladata (Virhe 404)</small>
+        <small>Kuva: "Everyday Essentials Kit" (Latausvirhe)</small>
     </div>
 
-    <h1>Testaa & Pidä: Everyday Essentials -setti</h1>
+    <h1>Testaa & Pidä: Arkimeikkisetti</h1>
     <div class="desc">
-        Etsimme 18-35 vuotiaita testaajia uudelle perusmeikkisetille. Saat tuotteet kotiin ja täytettyäsi 40 palautekysymystä, saat pitää setin (arvo n. 45€).
+        Osallistu tuotetestiin. Vastaa 40 kysymykseen, niin lähetämme setin kotiisi ilmaiseksi (arvo 45,90€).
     </div>
 
     <div id="progress-bar"><div id="progress-fill"></div></div>
 
     <div class="quiz-area" id="quiz-content">
         <span id="q-text">Kysymys 1 / 40: Kuinka usein ostat uusia meikkejä?</span>
-        <button class="btn" onclick="next()">Viikoittain</button>
-        <button class="btn" onclick="next()">Kuukausittain</button>
-        <button class="btn" onclick="next()">Harvemmin kuin kerran kuussa</button>
+        <button class="btn" onclick="nextClick()">Päivittäin</button>
+        <button class="btn" onclick="nextClick()">Viikoittain</button>
+        <button class="btn" onclick="nextClick()">Kuukausittain</button>
     </div>
 </div>
 
 <script>
     let step = 1;
+    
+    // Lista erilaisia kysymyksiä, jotta se näyttää aidolta
     const questions = [
-        "Minkä merkkisiä tuotteita käytät tällä hetkellä?",
         "Mikä on tärkein ominaisuus päivävoiteessa?",
         "Oletko valmis antamaan rehellistä palautetta?",
         "Käytätkö yleensä vedenkestävää ripsiväriä?",
         "Onko pakkauksen ulkonäkö sinulle tärkeä?",
         "Suositko hajusteettomia tuotteita?",
-        "Mistä yleensä ostat meikkisi?"
+        "Mistä yleensä ostat meikkisi?",
+        "Kuinka paljon käytät rahaa meikkeihin kuukaudessa?",
+        "Onko brändin ekologisuus sinulle tärkeää?",
+        "Mikä on ihotyyppisi (kuiva/rasvainen)?",
+        "Käytätkö meikinpohjustusvoidetta?",
+        "Kuinka monta eri ripsiväriä omistat?",
+        "Mikä on suosikki huulipuna-sävysi?",
+        "Käytätkö meikkisiveltimiä vai sieniä?"
     ];
 
-    function next() {
+    function nextClick() {
         if (step < 40) {
             step++;
-            document.getElementById('q-text').innerText = `Kysymys ${step} / 40: ${questions[step % questions.length]}`;
+            
+            // Päivitetään edistymispalkki
             document.getElementById('progress-fill').style.width = (step / 40 * 100) + "%";
             
-            // Pidetään huoli, että uhri ei luovuta
-            if (step === 30) {
-                alert("Melkein valmista! Vain 10 kysymystä jäljellä, niin pääset syöttämään osoitteesi.");
+            // Haetaan uusi kysymys listasta (kiertää listan ympäri jos loppuu kesken)
+            let qIndex = step % questions.length;
+            document.getElementById('q-text').innerText = `Kysymys ${step} / 40: ${questions[qIndex]}`;
+            
+            // Pieni "kannustus" loppuvaiheessa
+            if (step === 35) {
+                alert("Hienoa! Vain 5 kysymystä jäljellä ennen toimitustietojen syöttämistä.");
             }
         } else {
-            showPrank();
+            finish();
         }
     }
 
-    function showPrank() {
+    function finish() {
         document.querySelector('.container').innerHTML = `
             <div style="text-align: center; padding: 20px;">
                 <h1 style="font-size: 60px;">🤡</h1>
-                <h2 style="color:red;">Sua on pränkätty kunnolla!</h2>
-                <p>Vastasit oikeesti <b>neljäänkymmeneen</b> kysymykseen saadaksesi ilmasen meikkisetin...</p>
-                <p>Arvaa mitä? Ei täällä oo mitään meikkejä. <br><br> Terveisin: Sun kaveris.</p>
-                <button class="btn" style="text-align:center; background:#000; color:#fff;" onclick="location.reload()">Oon nolo, myönnetään</button>
+                <h2 style="color:#ff4d7d;">TÄÄ OLI PRÄNKKI!</h2>
+                <p>Vastasit oikeesti <b>40 kysymykseen</b> turhaan...</p>
+                <p>Ei täällä oo mitään meikkejä ja kuva oli rikki tarkoituksella. <br><br><b>Sua on huijattu!</b></p>
+                <button class="btn" style="text-align:center; background:#000; color:#fff;" onclick="window.location.reload()">Oonpa hölmö, nollaa sivu</button>
             </div>
         `;
     }
