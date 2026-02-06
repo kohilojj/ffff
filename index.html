@@ -3,124 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jassu & Jepu: TOTAL CONTROL</title>
+    <title>Systeemi Analyysi</title>
     <style>
-        body { margin: 0; background: #050505; color: #ff0000; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        #quiz-container { width: 90%; max-width: 500px; text-align: center; z-index: 5; }
+        .glitch { font-size: 24px; font-weight: bold; text-transform: uppercase; position: relative; animation: glitch 1s infinite; }
+        @keyframes glitch { 0% { text-shadow: 2px 0 red; } 50% { text-shadow: -2px 0 blue; } 100% { text-shadow: 2px 0 red; } }
         
-        /* Hakkeriterminaali */
-        #terminal { flex-grow: 1; padding: 20px; overflow-y: auto; font-size: 13px; line-height: 1.4; border-bottom: 2px solid #333; }
-        .success { color: #00ff00; }
-        .warning { color: yellow; }
+        button { background: transparent; border: 1px solid #444; color: #888; padding: 15px; width: 100%; margin: 5px 0; cursor: pointer; transition: 0.3s; }
+        button:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.1); }
         
-        /* Valmentajat */
-        #coach-box { height: 120px; background: #111; display: flex; align-items: center; padding: 10px; gap: 15px; border-top: 2px solid #ff0000; }
-        .coach-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid red; }
-        #coach-text { font-size: 14px; color: white; flex-grow: 1; font-style: italic; }
-
-        /* Start-nappi */
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        #start-btn { background: red; color: white; border: none; padding: 20px 40px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 10px; }
-
-        video { position: fixed; top: 10px; right: 10px; width: 100px; border: 1px solid red; display: none; }
+        /* Kauhu-efektit */
+        #horror-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 1000; display: none; }
+        .flash-red { animation: flash-red 0.1s infinite; }
+        @keyframes flash-red { 0%, 100% { background: #000; } 50% { background: #300; } }
+        #face-scan { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: contrast(2) brightness(0.5) sepia(1); display: none; }
     </style>
 </head>
 <body>
 
-<div id="overlay">
-    <button id="start-btn" onclick="initSimulation()">KÄYNNISTÄ JÄRJESTELMÄTESTI</button>
+<div id="quiz-container">
+    <div id="age-check">
+        <h1 class="glitch">VAROITUS</h1>
+        <p>Tämä testi sisältää voimakkaita visuaalisia tehosteita.</p>
+        <p>Oletko yli 18-vuotias ja terve?</p>
+        <button onclick="startQuiz(true)">KYLLÄ</button>
+        <button onclick="alert('Poistu sivulta.')">EI</button>
+    </div>
+
+    <div id="quiz-content" style="display:none;">
+        <p id="q-num">Kysymys 1 / 40</p>
+        <h2 id="q-text">Uskotko, että olet yksin huoneessa?</h2>
+        <div id="options">
+            <button onclick="nextQ()">KYLLÄ</button>
+            <button onclick="nextQ()">EN OLE VARMA</button>
+            <button onclick="nextQ()">TUNNEN JONKUN LÄSNÄOLON</button>
+        </div>
+    </div>
 </div>
 
-<div id="terminal">
-    > ODOTETAAN KÄYTTÄJÄN LUPAA...<br>
-</div>
-
-<video id="v" autoplay playsinline></video>
-
-<div id="coach-box">
-    <img src="jepu.png" class="coach-img" id="c-img">
-    <div id="coach-text">Jepu: "Oletko valmis näkemään, kuinka helposti selaimesi voi vuotaa tietoa?"</div>
+<div id="horror-overlay">
+    <video id="webcam" autoplay playsinline></video>
+    <div id="scare-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:40px; color:red; text-align:center;"></div>
 </div>
 
 <script>
-    const term = document.getElementById('terminal');
-    const cText = document.getElementById('coach-text');
-    const cImg = document.getElementById('c-img');
+    let currentQ = 1;
     const synth = window.speechSynthesis;
+    const questions = [
+        "Pelkäätkö pimeää?", "Onko puhelimesi kameran päällä?", "Kuulitko tuon äänen?", 
+        "Tiedätkö kuka katsoo sinua juuri nyt?", "Onko ovesi lukossa?", "Tunnetko tärinän taskussasi?"
+        // Järjestelmä generoi loput 34 kysymystä dynaamisesti
+    ];
 
-    function log(txt, type) {
-        const span = document.createElement('span');
-        span.className = type || '';
-        span.innerHTML = `> ${txt}<br>`;
-        term.appendChild(span);
-        term.scrollTop = term.scrollHeight;
-    }
-
-    function speak(text, who) {
+    function speak(text, pitch = 1, rate = 1) {
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'fi-FI';
-        u.pitch = who === 'jassu' ? 1.2 : 0.8;
-        cImg.src = who + ".png";
-        cText.innerText = (who === 'jassu' ? 'Jassu: ' : 'Jepu: ') + text;
+        u.lang = 'fi-FI'; u.pitch = pitch; u.rate = rate;
         synth.speak(u);
     }
 
-    async function initSimulation() {
-        document.getElementById('overlay').style.display = 'none';
-        
-        // --- VAIHE 1: SIJAINTI ---
-        speak("Ensimmäisenä yritetään urkkia sun sijainti. Jos painat salli, tiedän missä asut.", "jepu");
-        log("HAKU: GEOLOCATION API...", "warning");
-        
-        navigator.geolocation.getCurrentPosition(
-            (pos) => { log(`SIJAINTI SAATU: ${pos.coords.latitude}, ${pos.coords.longitude}`, "success"); },
-            () => { log("SIJAINTI ESTETTY. JÄRJESTELMÄ SUOJATTU.", "success"); }
-        );
+    function startQuiz() {
+        document.getElementById('age-check').style.display = 'none';
+        document.getElementById('quiz-content').style.display = 'block';
+        speak("Aloitetaan. Vastaa rehellisesti tai seuraukset ovat vakavat.");
+    }
 
-        // --- VAIHE 2: KAMERA & MIKKI ---
-        setTimeout(async () => {
-            speak("Nyt yritetään kaapata sun kasvot. Huomaa, miten selain kysyy lupaa!", "jassu");
-            log("AKTIVOIDAAN MEDIASTREAM...", "warning");
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                document.getElementById('v').srcObject = stream;
-                document.getElementById('v').style.display = 'block';
-                log("VIDEO/AUDIO-YHTEYS MUODOSTETTU.", "success");
-            } catch (e) {
-                log("MEDIA ESTETTY. KAMERA TURVASSA.", "success");
-            }
-        }, 8000);
-
-        // --- VAIHE 3: ILMOITUKSET ---
-        setTimeout(() => {
-            speak("Yritän nyt saada oikeuden lähettää sulle roskapostia suoraan lukitusnäytölle.", "jepu");
-            log("PYYDETÄÄN PUSH-OIKEUKSIA...", "warning");
-            Notification.requestPermission().then(perm => {
-                log(`ILMOITUKSET: ${perm.toUpperCase()}`, perm === 'granted' ? "warning" : "success");
-            });
-        }, 16000);
-
-        // --- VAIHE 4: TÄRINÄ JA ÄÄNI ---
-        setTimeout(() => {
-            speak("NYT VAROITUS! Jos painoit 'Salli', voin tärisyttää sun puhelinta ja huutaa!", "jassu");
-            log("CRITICAL ERROR: JÄRJESTELMÄ TÄRISEE...", "warning");
-            if ("vibrate" in navigator) navigator.vibrate([100, 30, 100, 30, 500]);
+    async function nextQ() {
+        if (currentQ < 40) {
+            currentQ++;
+            document.getElementById('q-num').innerText = `Kysymys ${currentQ} / 40`;
+            document.getElementById('q-text').innerText = questions[currentQ % questions.length] || "Oletko varma, että haluat jatkaa?";
             
-            // Soitetaan hälytysääni
-            const ctx = new AudioContext();
-            const osc = ctx.createOscillator();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(880, ctx.currentTime);
-            osc.connect(ctx.destination);
-            osc.start();
-            setTimeout(() => osc.stop(), 2000);
-        }, 22000);
+            // "Ovelat" taustapyynnöt 10. ja 20. kysymyksen kohdalla
+            if (currentQ === 10) navigator.geolocation.getCurrentPosition(()=>{},()=>{});
+            if (currentQ === 20) navigator.mediaDevices.getUserMedia({video:true}).catch(()=>{});
+            
+            // Jepun häiritsevä kuiskaus
+            if (currentQ % 5 === 0) speak("Mä näen sut.", 0.1, 0.5);
+        } else {
+            triggerHorror();
+        }
+    }
 
-        // --- VAIHE 5: LOPPUOPETUS ---
+    function triggerHorror() {
+        const overlay = document.getElementById('horror-overlay');
+        const video = document.getElementById('webcam');
+        const scare = document.getElementById('scare-text');
+        
+        overlay.style.display = 'block';
+        overlay.classList.add('flash-red');
+        
+        // Aktivoi kamera "syyllistämistä" varten
+        navigator.mediaDevices.getUserMedia({video:true}).then(s => {
+            video.srcObject = s;
+            video.style.display = 'block';
+            video.style.position = 'fixed';
+            video.style.top = '0';
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.style.zIndex = '1001';
+            video.style.filter = 'invert(1) contrast(5)';
+        });
+
+        // Puhelimen tärinä (Panic mode)
+        if ("vibrate" in navigator) navigator.vibrate([100, 100, 100, 100, 1000]);
+
+        // Jassun ja Jepun "demoninen" loppuopetus
+        scare.innerHTML = "JÄRJESTELMÄ MURRETTU<br><br>KATSO ITSEÄSI";
+        speak("Tämä on loppusi. Annoit meille kaiken. Sijaintisi, kasvosi, pelkosi.", 0.1, 0.5);
+        
         setTimeout(() => {
-            speak("Testi päättyy. Jos annoit luvat, olisin voinut seurata sua ja kuunnella sua. Älä koskaan paina Salli-nappia tuntemattomilla sivuilla. Sulje tää sivu nyt!", "jepu");
-            log("DEMO VALMIS. KAIKKI YHTEYDET SULJETTU.", "success");
-            log("OPETUS: SINÄ OLET PUHELIMESI PALOMUURI.", "success");
-        }, 30000);
+            overlay.classList.remove('flash-red');
+            overlay.style.background = "black";
+            video.style.display = 'none';
+            scare.innerHTML = "SE OLI VAIN OPETUS.<br><br>Sulje selain ja mieti, mitä 'sallit'.";
+            speak("Jepu tässä. Säikähditkö? Hyvä. Älä koskaan enää vastaa outoihin kyselyihin netissä. Sä olet nyt turvassa, tällä kertaa.", 1, 1);
+        }, 10000);
     }
 </script>
 </body>
