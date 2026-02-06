@@ -3,122 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Systeemi Analyysi</title>
+    <title>SEPHORA | Exclusive Flash Sale</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        #quiz-container { width: 90%; max-width: 500px; text-align: center; z-index: 5; }
-        .glitch { font-size: 24px; font-weight: bold; text-transform: uppercase; position: relative; animation: glitch 1s infinite; }
-        @keyframes glitch { 0% { text-shadow: 2px 0 red; } 50% { text-shadow: -2px 0 blue; } 100% { text-shadow: 2px 0 red; } }
+        /* Aito ulkoasu aluksi */
+        body { margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background: #fff; color: #000; overflow-x: hidden; }
+        header { background: #000; color: #fff; padding: 15px; text-align: center; font-weight: bold; letter-spacing: 2px; }
+        .promo-banner { background: #ff0050; color: #fff; padding: 10px; text-align: center; font-size: 14px; font-weight: bold; }
         
-        button { background: transparent; border: 1px solid #444; color: #888; padding: 15px; width: 100%; margin: 5px 0; cursor: pointer; transition: 0.3s; }
-        button:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.1); }
-        
-        /* Kauhu-efektit */
-        #horror-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 1000; display: none; }
-        .flash-red { animation: flash-red 0.1s infinite; }
-        @keyframes flash-red { 0%, 100% { background: #000; } 50% { background: #300; } }
-        #face-scan { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: contrast(2) brightness(0.5) sepia(1); display: none; }
+        #shop-content { padding: 20px; text-align: center; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .product { border: 1px solid #eee; padding: 10px; border-radius: 5px; }
+        .product img { width: 100%; border-radius: 5px; }
+        .price { color: #ff0050; font-weight: bold; font-size: 18px; }
+        .old-price { text-decoration: line-through; color: #888; font-size: 12px; }
+
+        .btn-buy { background: #000; color: #fff; border: none; padding: 15px; width: 100%; margin-top: 20px; font-weight: bold; cursor: pointer; }
+
+        /* Kauhuefektit (Piilossa aluksi) */
+        #horror-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; color: #f00; font-family: serif; text-align: center; }
+        video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 999; display: none; filter: contrast(4) invert(1) sepia(100%) hue-rotate(320deg); }
+        .static { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('https://media.giphy.com/media/oEI9uWUicG3u/giphy.gif'); opacity: 0.05; pointer-events: none; z-index: 1100; }
     </style>
 </head>
 <body>
 
-<div id="quiz-container">
-    <div id="age-check">
-        <h1 class="glitch">VAROITUS</h1>
-        <p>Tämä testi sisältää voimakkaita visuaalisia tehosteita.</p>
-        <p>Oletko yli 18-vuotias ja terve?</p>
-        <button onclick="startQuiz(true)">KYLLÄ</button>
-        <button onclick="alert('Poistu sivulta.')">EI</button>
-    </div>
+<div id="main-ui">
+    <header>SEPHORA</header>
+    <div class="promo-banner">FLASH SALE: KAIKKI MEIKIT -95% VAIN 15 MINUUTTIA!</div>
 
-    <div id="quiz-content" style="display:none;">
-        <p id="q-num">Kysymys 1 / 40</p>
-        <h2 id="q-text">Uskotko, että olet yksin huoneessa?</h2>
-        <div id="options">
-            <button onclick="nextQ()">KYLLÄ</button>
-            <button onclick="nextQ()">EN OLE VARMA</button>
-            <button onclick="nextQ()">TUNNEN JONKUN LÄSNÄOLON</button>
+    <div id="shop-content">
+        <h2>VALITSE LAHJAPAKKAUKSESI</h2>
+        <div class="product-grid">
+            <div class="product">
+                <img src="https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?w=300" alt="Makeup">
+                <p>Luxury Palette</p>
+                <p class="price">2.90€ <span class="old-price">89.00€</span></p>
+            </div>
+            <div class="product">
+                <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300" alt="Lipstick">
+                <p>Matte Lip Kit</p>
+                <p class="price">1.50€ <span class="old-price">45.00€</span></p>
+            </div>
         </div>
+        <button class="btn-buy" onclick="startPrank()">LUNASTA TARJOUS HETI</button>
     </div>
 </div>
 
 <div id="horror-overlay">
-    <video id="webcam" autoplay playsinline></video>
-    <div id="scare-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:40px; color:red; text-align:center;"></div>
+    <div style="margin-top: 40vh; font-size: 30px; letter-spacing: 5px;">HINTA ON MAKSETTU.</div>
 </div>
+<video id="v" autoplay playsinline></video>
+<div class="static"></div>
 
 <script>
-    let currentQ = 1;
     const synth = window.speechSynthesis;
-    const questions = [
-        "Pelkäätkö pimeää?", "Onko puhelimesi kameran päällä?", "Kuulitko tuon äänen?", 
-        "Tiedätkö kuka katsoo sinua juuri nyt?", "Onko ovesi lukossa?", "Tunnetko tärinän taskussasi?"
-        // Järjestelmä generoi loput 34 kysymystä dynaamisesti
-    ];
 
-    function speak(text, pitch = 1, rate = 1) {
+    function speak(text, pitch = 0.1, rate = 0.5) {
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'fi-FI'; u.pitch = pitch; u.rate = rate;
         synth.speak(u);
     }
 
-    function startQuiz() {
-        document.getElementById('age-check').style.display = 'none';
-        document.getElementById('quiz-content').style.display = 'block';
-        speak("Aloitetaan. Vastaa rehellisesti tai seuraukset ovat vakavat.");
-    }
+    async function startPrank() {
+        // Pyydetään kamera-oikeudet "kasvojentunnistusta" varten
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            document.getElementById('v').srcObject = stream;
+        } catch(e) {}
 
-    async function nextQ() {
-        if (currentQ < 40) {
-            currentQ++;
-            document.getElementById('q-num').innerText = `Kysymys ${currentQ} / 40`;
-            document.getElementById('q-text').innerText = questions[currentQ % questions.length] || "Oletko varma, että haluat jatkaa?";
-            
-            // "Ovelat" taustapyynnöt 10. ja 20. kysymyksen kohdalla
-            if (currentQ === 10) navigator.geolocation.getCurrentPosition(()=>{},()=>{});
-            if (currentQ === 20) navigator.mediaDevices.getUserMedia({video:true}).catch(()=>{});
-            
-            // Jepun häiritsevä kuiskaus
-            if (currentQ % 5 === 0) speak("Mä näen sut.", 0.1, 0.5);
-        } else {
-            triggerHorror();
-        }
+        // Aloitetaan 40 kysymyksen piina nopeasti
+        let count = 1;
+        const shop = document.getElementById('main-ui');
+        
+        const interval = setInterval(() => {
+            shop.style.opacity = Math.random();
+            if (count % 5 === 0) speak("Halpaa, eikö?", 0.1, 0.6);
+            count++;
+
+            if (count > 20) {
+                clearInterval(interval);
+                triggerHorror();
+            }
+        }, 300);
     }
 
     function triggerHorror() {
-        const overlay = document.getElementById('horror-overlay');
-        const video = document.getElementById('webcam');
-        const scare = document.getElementById('scare-text');
-        
-        overlay.style.display = 'block';
-        overlay.classList.add('flash-red');
-        
-        // Aktivoi kamera "syyllistämistä" varten
-        navigator.mediaDevices.getUserMedia({video:true}).then(s => {
-            video.srcObject = s;
-            video.style.display = 'block';
-            video.style.position = 'fixed';
-            video.style.top = '0';
-            video.style.width = '100%';
-            video.style.height = '100%';
-            video.style.zIndex = '1001';
-            video.style.filter = 'invert(1) contrast(5)';
-        });
+        document.getElementById('main-ui').style.display = 'none';
+        document.getElementById('horror-overlay').style.display = 'block';
+        document.getElementById('v').style.display = 'block';
 
-        // Puhelimen tärinä (Panic mode)
-        if ("vibrate" in navigator) navigator.vibrate([100, 100, 100, 100, 1000]);
+        if ("vibrate" in navigator) navigator.vibrate([500, 100, 500, 100, 2000]);
 
-        // Jassun ja Jepun "demoninen" loppuopetus
-        scare.innerHTML = "JÄRJESTELMÄ MURRETTU<br><br>KATSO ITSEÄSI";
-        speak("Tämä on loppusi. Annoit meille kaiken. Sijaintisi, kasvosi, pelkosi.", 0.1, 0.5);
-        
+        speak("Sinun kasvosi ovat nyt meidän meikkimme.", 0.1, 0.4);
+
         setTimeout(() => {
-            overlay.classList.remove('flash-red');
-            overlay.style.background = "black";
-            video.style.display = 'none';
-            scare.innerHTML = "SE OLI VAIN OPETUS.<br><br>Sulje selain ja mieti, mitä 'sallit'.";
-            speak("Jepu tässä. Säikähditkö? Hyvä. Älä koskaan enää vastaa outoihin kyselyihin netissä. Sä olet nyt turvassa, tällä kertaa.", 1, 1);
-        }, 10000);
+            document.body.style.background = "red";
+            document.getElementById('horror-overlay').innerHTML = "<h1 style='color:black; font-size:60px; margin-top:40%;'>OLETKO KAUNIS NYT?</h1>";
+        }, 5000);
     }
 </script>
 </body>
