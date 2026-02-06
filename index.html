@@ -2,220 +2,34 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSL Mobiililippu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Norwegian - Boarding Pass</title>
     <style>
-        :root {
-            --hsl-blue: #007ac9;
-            --hsl-green: #64be1e;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #ffffff;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Yläpalkki */
-        .app-bar {
-            background-color: var(--hsl-blue);
-            height: 56px;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        /* Lippusivun sisältö */
-        .ticket-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 16px;
-        }
-
-        /* Vyöhykeympyrä animaatiolla */
-        .zone-display {
-            width: 130px;
-            height: 130px;
-            background-color: var(--hsl-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 54px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            box-shadow: 0 0 0 0px rgba(100, 190, 30, 0.4);
-            animation: hsl-pulse 2.5s infinite;
-        }
-
-        @keyframes hsl-pulse {
-            0% { box-shadow: 0 0 0 0px rgba(100, 190, 30, 0.4); }
-            70% { box-shadow: 0 0 0 18px rgba(100, 190, 30, 0); }
-            100% { box-shadow: 0 0 0 0px rgba(100, 190, 30, 0); }
-        }
-
-        .status-label {
-            color: var(--hsl-green);
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .countdown-timer {
-            font-size: 48px;
-            font-weight: 800;
-            color: #333;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-        }
-
-        /* QR-kortti ja liukuva aalto */
-        .qr-container {
-            width: 100%;
-            max-width: 320px;
-            background-color: #f1f6f9;
-            border: 1px solid #dce6ed;
-            border-radius: 16px;
-            padding: 24px 0;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-        }
-
-        .qr-image {
-            width: 180px;
-            height: 180px;
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            z-index: 2;
-        }
-
-        .wave-animation {
-            position: absolute;
-            bottom: 0;
-            left: -100%;
-            width: 200%;
-            height: 60px;
-            background: linear-gradient(90deg, transparent, rgba(0, 122, 201, 0.08), transparent);
-            animation: wave-move 4s linear infinite;
-            z-index: 1;
-        }
-
-        @keyframes wave-move {
-            from { transform: translateX(0); }
-            to { transform: translateX(50%); }
-        }
-
-        .ticket-details {
-            margin-top: 16px;
-            font-size: 14px;
-            color: #555;
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        /* Käyttöehdot - EME VASTAA MISTÄÄN */
-        .legal-disclaimer {
-            margin-top: 40px;
-            padding: 16px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #eee;
-            font-size: 10px;
-            color: #aaa;
-            text-align: left;
-        }
-
-        /* --- TROLLI-PALJASTUS (Välkkyy 2s välein) --- */
-        #bust-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ff0000;
-            color: white;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 999999;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-
-<div class="app-bar">Kertalippu</div>
-
-<div class="ticket-area">
-    <div class="status-label">● VOIMASSA</div>
-    <div class="zone-display">AB</div>
-    <div class="countdown-timer" id="timer">01:19:59</div>
-
-    <div class="qr-container">
-        <div class="wave-animation"></div>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=FAKE_TICKET_BUSTED" class="qr-image" alt="QR">
-    </div>
-
-    <div class="ticket-details">
-        Aikuinen, Kertalippu<br>
-        <span id="current-timestamp"></span><br>
-        Lipun numero: 582-119-204
-    </div>
-</div>
-
-<div class="legal-disclaimer">
-    <b>KÄYTTÖEHDOT:</b> Tämä tuote on tarkoitettu vain viihteelliseen ja opetukselliseen käyttöön. 
-    Lipun julkaisija tai ylläpitäjä <b>ei vastaa millään tavalla</b> mistään suorista, epäsuorista tai satunnaisista vahingoista, 
-    kuten tarkastusmaksuista (80€), matkustusoikeuden epäämisestä tai oikeudellisista seurauksista. 
-    <b>Käyttäjä hyväksyy, ettei ylläpito vastaa mistään saatanan mistään.</b>
-</div>
-
-<div id="bust-overlay">
-    <div style="font-size: 100px;">🛑</div>
-    <h1 style="font-size: 50px; font-weight: 900; margin: 0;">VÄÄRENNÖS</h1>
-    <p style="background: black; padding: 10px 20px; font-size: 20px; font-weight: bold; margin-top: 20px;">
-        KULJETTAJA: TARKISTA LIPPU
-    </p>
-    <p style="margin-top: 20px; font-size: 14px;">Tämä lippu on todettu väärennökseksi.</p>
-</div>
-
-<script>
-    // Päivitetään pvm ja kellonaika reaaliajassa
-    function updateClock() {
-        const now = new Date();
-        const dateStr = now.getDate() + "." + (now.getMonth() + 1) + "." + now.getFullYear();
-        const timeStr = now.getHours() + ":" + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
-        document.getElementById('current-timestamp').innerText = dateStr + " " + timeStr;
-    }
-    updateClock();
-
-    // Lippu-ajastin (80 min)
-    let timeLeft = 80 * 60;
-    setInterval(() => {
-        timeLeft--;
-        let m = Math.floor(timeLeft / 60);
-        let s = timeLeft % 60;
-        document.getElementById('timer').innerText = (m < 10 ? '0' : '') + m + ":" + (s < 10 ? '0' : '') + s;
-    }, 1000);
-
-    // PALJASTUS-VILKKU (Aina 2 sekunnin välein)
-    const overlay = document.getElementById('bust-overlay');
-    setInterval(() => {
-        overlay.style.display = 'flex';
-        if (navigator.vibrate) navigator.vibrate([400, 100, 400]); // Puhelin tärisee
+        /* Norwegianin tyyliin */
+        body { font-family: 'Open Sans', Arial, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px 0; }
         
-        setTimeout(() => {
-            overlay.style.display = 'none';
-        }, 800); // Näkyy 0,8 sekuntia
-    }, 2500); // Sykli alkaa 2,5 sekunnin välein
-</script>
+        #boarding-pass { 
+            background: white; width: 680px; padding: 25px 30px; border-radius: 6px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #ddd; 
+            box-sizing: border-box; position: relative;
+        }
 
-</body>
-</html>
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px; }
+        .logo { font-size: 26px; font-weight: 800; color: #cc0000; letter-spacing: -0.5px; } /* Norwegianin punainen */
+        .pass-title { font-size: 22px; font-weight: 600; color: #333; }
+
+        .segment { display: flex; margin-bottom: 20px; }
+        .segment-left { flex: 0 0 70%; padding-right: 20px; }
+        .segment-right { flex: 0 0 30%; border-left: 2px dashed #eee; padding-left: 20px; text-align: right; }
+
+        .field-row { display: flex; margin-bottom: 10px; }
+        .field { flex: 1; margin-right: 20px; }
+        .field:last-child { margin-right: 0; }
+        .field-label { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 2px; display: block; }
+        .field-value { font-size: 18px; font-weight: bold; color: #333; }
+        
+        .large-field .field-value { font-size: 28px; }
+
+        .flight-info { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px; }
+        .flight-data { font-size: 13px; color: #666; line-height: 1.6; }
+        .barcode { width: 150px; height: 50px; background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIIAAAAyAQMAAAC8gD5eAAAABlBMVEUAAAD///84j1hEAAAAwElEQVQokeWTMQ6DIAxFv5B7B19G/eBq62/iW5wzK5XW7K/eJJB1h6a5zWbX/5N5kG1oH1c0fH8M/pS231mKxR3xN3wJ11R4Jv8E39T3i/8C/P/eE+f+9F9Q+6D6x/gD/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H9w/4D/A3zB/5j/Q37P+X/iX+C/yX/j/4d/P/dE/P/eE+f/8H
