@@ -1,26 +1,37 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Jassu & Jepu: Koominen Kasvotsunami</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <title>Jassu ja Jepu Peli</title>
+    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background: #87CEEB; font-family: 'Comic Sans MS', cursive; }
-        #ui { position: absolute; top: 10px; left: 10px; pointer-events: none; z-index: 10; }
-        #score { font-size: 30px; color: white; text-shadow: 2px 2px 0 #000; }
-        .instrukti { position: absolute; bottom: 10px; width: 100%; text-align: center; color: white; z-index: 10; }
-        canvas { display: block; }
+        body { margin: 0; padding: 0; overflow: hidden; background-color: #87CEEB; }
+        #scoreBoard {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 100;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
-<div id="ui">
-    <div id="score">Pisteet: 0</div>
-</div>
-<div class="instrukti">Klikkaa naamoja! (Jos kuvat ei lataa, näet väripalloja)</div>
+<div id="scoreBoard">Pisteet: 0</div>
 
 <script>
-    const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events } = Matter;
+    // Alustus
+    const Engine = Matter.Engine,
+        Render = Matter.Render,
+        Runner = Matter.Runner,
+        Bodies = Matter.Bodies,
+        Composite = Matter.Composite,
+        Mouse = Matter.Mouse,
+        MouseConstraint = Matter.MouseConstraint;
 
     const engine = Engine.create();
     const render = Render.create({
@@ -29,43 +40,42 @@
         options: {
             width: window.innerWidth,
             height: window.innerHeight,
-            wireframes: false, // TÄRKEÄ: Pitää olla false
+            wireframes: false,
             background: '#87CEEB'
         }
     });
 
-    // Seinät
-    const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight + 30, window.innerWidth, 60, { isStatic: true });
-    const leftWall = Bodies.rectangle(-30, window.innerHeight/2, 60, window.innerHeight, { isStatic: true });
-    const rightWall = Bodies.rectangle(window.innerWidth + 30, window.innerHeight/2, 60, window.innerHeight, { isStatic: true });
-    Composite.add(engine.world, [ground, leftWall, rightWall]);
+    // Luodaan lattia
+    const ground = Bodies.rectangle(window.innerWidth/2, window.innerHeight + 25, window.innerWidth, 50, { isStatic: true });
+    Composite.add(engine.world, ground);
 
+    // Pistelasku
     let score = 0;
+    const scoreDiv = document.getElementById('scoreBoard');
 
-    function spawnFace() {
+    // Luodaan palloja
+    function dropFace() {
         const x = Math.random() * window.innerWidth;
         const isJassu = Math.random() > 0.5;
-        const imgPath = isJassu ? 'jassu.png' : 'jepu.png';
-
-        const face = Bodies.circle(x, -50, 45, {
-            restitution: 0.6,
-            friction: 0.1,
+        
+        const face = Bodies.circle(x, -50, 40, {
+            restitution: 0.8,
             render: {
-                // Jos kuva löytyy, se käytetään. Jos ei, näkyy väri.
-                fillStyle: isJassu ? '#FFD700' : '#FF69B4', 
+                // TÄRKEÄ: Jos kuvat ei toimi, nämä värit näkyvät
+                fillStyle: isJassu ? 'yellow' : 'pink',
                 sprite: {
-                    texture: imgPath,
-                    xScale: 0.5,
-                    yScale: 0.5
+                    texture: isJassu ? 'jassu.png' : 'jepu.png',
+                    xScale: 0.2,
+                    yScale: 0.2
                 }
             }
         });
 
-        face.label = "clickable";
+        face.label = "naama";
         Composite.add(engine.world, face);
     }
 
-    // Hiirikontrolli
+    // Hiirikontrolli klikkaamiseen
     const mouse = Mouse.create(render.canvas);
     const mouseConstraint = MouseConstraint.create(engine, {
         mouse: mouse,
@@ -73,33 +83,29 @@
     });
     Composite.add(engine.world, mouseConstraint);
 
-    // Klikkauksen tunnistus
-    Events.on(mouseConstraint, "mousedown", function(event) {
+    // Klikkaustapahtuma
+    Matter.Events.on(mouseConstraint, 'mousedown', function(event) {
         const mousePosition = event.mouse.position;
         const bodies = Composite.allBodies(engine.world);
-        
-        bodies.forEach(body => {
-            if (body.label === "clickable" && Matter.Bounds.contains(body.bounds, mousePosition)) {
+
+        for (let i = 0; i < bodies.length; i++) {
+            const body = bodies[i];
+            if (body.label === "naama" && Matter.Bounds.contains(body.bounds, mousePosition)) {
                 Composite.remove(engine.world, body);
                 score += 10;
-                document.getElementById('score').innerText = "Pisteet: " + score;
+                scoreDiv.innerText = "Pisteet: " + score;
+                break;
             }
-        });
+        }
     });
 
-    // Käynnistys
+    // Ajetaan peli
     Render.run(render);
-    const runner = Runner.create();
-    Runner.run(runner, engine);
+    Runner.run(Runner.create(), engine);
 
-    // Tiputustiheys (800ms = nopeampi)
-    setInterval(spawnFace, 800);
+    // Tiputetaan uusi pallo sekunnin välein
+    setInterval(dropFace, 1000);
 
-    // Korjaus ikkunan koon muutokseen
-    window.addEventListener('resize', () => {
-        render.canvas.width = window.innerWidth;
-        render.canvas.height = window.innerHeight;
-    });
 </script>
 </body>
 </html>
