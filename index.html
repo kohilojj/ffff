@@ -2,187 +2,170 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jassu & Jepu: Swipe for Love 40</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jassu & Jepu: Tinder Women</title>
     <style>
+        :root { --tinder-pink: #fe3c72; --tinder-gray: #f0f2f5; }
         body {
-            margin: 0;
-            background: #fdf2f8; /* Vaaleanpunainen tausta */
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
+            margin: 0; background-color: var(--tinder-gray);
+            font-family: -apple-system, sans-serif;
+            display: flex; flex-direction: column; align-items: center;
+            height: 100vh; overflow: hidden;
         }
-        #header {
-            position: absolute;
-            top: 20px;
-            display: flex;
-            gap: 20px;
-            z-index: 10;
+        #nav {
+            width: 100%; height: 60px; background: white;
+            display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1); z-index: 10;
         }
-        .profile-pic {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 3px solid #ff2d55;
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        #card-container {
-            position: relative;
-            width: 320px;
-            height: 480px;
-            perspective: 1000px;
+        .nav-icon { width: 35px; height: 35px; border-radius: 50%; background-size: cover; background-position: center; border: 2px solid var(--tinder-pink); }
+        #container {
+            position: relative; flex-grow: 1; width: 90%; max-width: 400px;
+            margin-top: 20px; margin-bottom: 120px;
         }
         .card {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            user-select: none;
-            cursor: grab;
-            transition: transform 0.3s ease, background 0.3s;
+            position: absolute; width: 100%; height: 100%;
+            background: white; border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            overflow: hidden; display: flex; flex-direction: column;
+            cursor: grab; transition: transform 0.3s ease; user-select: none;
         }
-        .card img {
-            width: 100%;
-            height: 85%;
-            object-fit: cover;
-            pointer-events: none;
+        .card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .card-bottom {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            color: white; pointer-events: none;
         }
-        .card-info {
-            padding: 15px;
-            font-size: 22px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
+        .card-name { font-size: 26px; font-weight: bold; }
+        .card-bio { font-size: 15px; opacity: 0.9; margin-top: 5px; }
+        #actions { position: absolute; bottom: 30px; display: flex; gap: 30px; z-index: 20; }
+        .btn {
+            width: 65px; height: 65px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 28px; cursor: pointer; border: none; transition: transform 0.1s;
         }
-        #match-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 45, 85, 0.95);
-            color: white;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            text-align: center;
+        .btn-no { color: #fd5068; border: 2px solid #fd5068; }
+        .btn-yes { color: #1be4a1; border: 2px solid #1be4a1; }
+        #match-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); color: white;
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100;
         }
-        #match-overlay h1 { font-size: 50px; margin: 0; }
-        #match-overlay button {
-            margin-top: 30px; padding: 15px 40px;
-            font-size: 20px; border: none; border-radius: 30px;
-            background: white; color: #ff2d55; font-weight: bold; cursor: pointer;
-        }
+        #match-screen h1 { font-size: 50px; color: var(--tinder-pink); font-family: 'Brush Script MT', cursive; }
+        .match-imgs { display: flex; gap: 15px; margin: 20px; }
     </style>
 </head>
 <body>
 
-<div id="header">
-    <div class="profile-pic" style="background-image: url('jassu.png');"></div>
-    <div class="profile-pic" style="background-image: url('jepu.png');"></div>
+<div id="nav">
+    <div class="nav-icon" style="background-image: url('jassu.png');"></div>
+    <div style="font-weight: bold; color: var(--tinder-pink); font-size: 22px;">Tinder</div>
+    <div class="nav-icon" style="background-image: url('jepu.png');"></div>
 </div>
 
-<div id="card-container">
-    </div>
+<div id="container"></div>
 
-<div id="match-overlay">
-    <h1>IT'S A MATCH! ❤️</h1>
-    <p>Löytyisikö tästä se oikea?</p>
-    <button onclick="closeMatch()">Jatka etsimistä</button>
+<div id="actions">
+    <button class="btn btn-no" onclick="handleBtn(false)">✖</button>
+    <button class="btn btn-yes" onclick="handleBtn(true)">❤</button>
+</div>
+
+<div id="match-screen" onclick="this.style.display='none'">
+    <h1>It's a Match! ❤️</h1>
+    <div class="match-imgs">
+        <div class="nav-icon" style="width:100px; height:100px; background-image: url('jassu.png'); border: 3px solid white;"></div>
+        <div id="match-pic" style="width:100px; height:100px; border-radius:50%; background-size:cover; background-position:center; border: 3px solid white;"></div>
+    </div>
+    <p style="font-size: 20px;">Olette tykänneet toisistanne!</p>
+    <button style="margin-top:30px; padding:12px 40px; border-radius:25px; border:none; background:var(--tinder-pink); color:white; font-weight:bold;">LÄHETÄ VIESTI</button>
 </div>
 
 <script>
-    const container = document.getElementById('card-container');
+    const container = document.getElementById('container');
     const kissSound = new Audio('https://www.myinstants.com/media/sounds/kiss-sound-effect.mp3');
     
-    // Automaattinen listan luonti: ukko1.png ... ukko40.png
-    const candidates = [];
-    for (let i = 1; i <= 40; i++) {
-        candidates.push({
-            name: "Ehdokas #" + i,
-            img: "ukko" + i + ".png"
-        });
-    }
+    const bios = ["Elämästä nautiskelija 🌟", "Tanssi on intohimo 💃", "Etsin matkakumppania ✈️", "Viiniä ja hyvää ruokaa 🍷", "Koiraihminen 🐾", "Nauretaan yhdessä? 😊"];
+    const names = ["Anna", "Emilia", "Sara", "Laura", "Sofia", "Iida", "Minna", "Sanni", "Hanna", "Ella"];
 
-    // Sekoitetaan lista, jotta järjestys on joka kerta eri (valinnainen)
-    candidates.sort(() => Math.random() - 0.5);
+    for (let i = 1; i <= 90; i++) {
+        const data = {
+            name: names[Math.floor(Math.random() * names.length)],
+            age: Math.floor(Math.random() * 10) + 20,
+            // HAKEE NAISET: men sijasta women
+            img: `https://randomuser.me/api/portraits/women/${i}.jpg`,
+            bio: bios[Math.floor(Math.random() * bios.length)]
+        };
+        createCard(data);
+    }
 
     function createCard(data) {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-            <img src="${data.img}" onerror="this.src='https://via.placeholder.com/300x400?text=Kuva+Puuttuu'">
-            <div class="card-info">${data.name}</div>
+            <img src="${data.img}">
+            <div class="card-bottom">
+                <div class="card-name">${data.name}, ${data.age}</div>
+                <div class="card-bio">${data.bio}</div>
+            </div>
         `;
-        
-        let startX = 0;
-        let currentX = 0;
 
-        const startSwipe = (e) => {
-            startX = e.clientX || e.touches[0].clientX;
-            document.addEventListener('mousemove', moveSwipe);
-            document.addEventListener('touchmove', moveSwipe);
-            document.addEventListener('mouseup', endSwipe);
-            document.addEventListener('touchend', endSwipe);
+        let startX, currentX;
+
+        const start = (e) => {
+            startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            document.addEventListener('mousemove', move);
+            document.addEventListener('touchmove', move);
+            document.addEventListener('mouseup', end);
+            document.addEventListener('touchend', end);
         };
 
-        const moveSwipe = (e) => {
-            currentX = (e.clientX || e.touches[0].clientX) - startX;
+        const move = (e) => {
+            currentX = (e.clientX || (e.touches ? e.touches[0].clientX : 0)) - startX;
             card.style.transform = `translateX(${currentX}px) rotate(${currentX / 15}deg)`;
-            
-            if (currentX > 80) card.style.background = "#d1fae5"; // Vihreä
-            else if (currentX < -80) card.style.background = "#fee2e2"; // Punainen
-            else card.style.background = "white";
         };
 
-        const endSwipe = () => {
-            document.removeEventListener('mousemove', moveSwipe);
-            document.removeEventListener('touchmove', moveSwipe);
-            
-            if (currentX > 120) { // Oikealle = Match!
-                card.style.transform = "translateX(1000px) rotate(40deg)";
+        const end = () => {
+            document.removeEventListener('mousemove', move);
+            document.removeEventListener('touchmove', move);
+            if (currentX > 100) swipe(1, data.img);
+            else if (currentX < -100) swipe(-1);
+            else card.style.transform = '';
+        };
+
+        const swipe = (dir, img) => {
+            card.style.transform = `translateX(${dir * 1000}px) rotate(${dir * 30}deg)`;
+            if (dir > 0 && Math.random() > 0.7) {
                 setTimeout(() => {
-                    card.remove();
-                    if (Math.random() > 0.3) { // 70% mahdollisuus saada Match
-                        showMatch();
-                    }
+                    document.getElementById('match-pic').style.backgroundImage = `url('${img}')`;
+                    document.getElementById('match-screen').style.display = 'flex';
+                    kissSound.play();
                 }, 200);
-            } else if (currentX < -120) { // Vasemmalle = Ei jatkoon
-                card.style.transform = "translateX(-1000px) rotate(-40deg)";
-                setTimeout(() => card.remove(), 200);
-            } else {
-                card.style.transform = "translateX(0) rotate(0)";
-                card.style.background = "white";
             }
+            setTimeout(() => card.remove(), 300);
         };
 
-        card.addEventListener('mousedown', startSwipe);
-        card.addEventListener('touchstart', startSwipe);
+        card.addEventListener('mousedown', start);
+        card.addEventListener('touchstart', start);
         container.appendChild(card);
     }
 
-    function showMatch() {
-        kissSound.play().catch(() => {});
-        document.getElementById('match-overlay').style.display = 'flex';
+    function handleBtn(isLike) {
+        const cards = container.querySelectorAll('.card');
+        if (cards.length > 0) {
+            const topCard = cards[cards.length - 1];
+            const dir = isLike ? 1 : -1;
+            const img = topCard.querySelector('img').src;
+            topCard.style.transform = `translateX(${dir * 1000}px) rotate(${dir * 30}deg)`;
+            if (isLike && Math.random() > 0.7) {
+                setTimeout(() => {
+                    document.getElementById('match-pic').style.backgroundImage = `url('${img}')`;
+                    document.getElementById('match-screen').style.display = 'flex';
+                    kissSound.play();
+                }, 200);
+            }
+            setTimeout(() => topCard.remove(), 300);
+        }
     }
-
-    function closeMatch() {
-        document.getElementById('match-overlay').style.display = 'none';
-    }
-
-    // Luodaan kaikki 40 korttia pinoksi
-    candidates.forEach(createCard);
-
 </script>
 </body>
 </html>
