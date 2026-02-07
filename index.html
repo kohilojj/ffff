@@ -3,182 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Norwegian - Boarding Pass</title>
+    <title>Medical Student Simulator</title>
     <style>
-        :root { --norwegian-red: #d81921; }
-        body { 
-            margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: #fdfdfd; 
-            color: #1a1a1a; 
-            -webkit-font-smoothing: antialiased;
-        }
+        :root { --med-blue: #007ac9; --med-green: #64be1e; --med-red: #d81921; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; justify-content: center; }
         
-        .ticket-wrapper { 
-            width: 100%; 
-            max-width: 480px; 
-            margin: 0 auto; 
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
+        .game-wrapper { width: 100%; max-width: 500px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        
+        .header { background: var(--med-blue); color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 20px; }
+        
+        .stats { display: flex; justify-content: space-around; background: #e1f5fe; padding: 10px; font-size: 14px; font-weight: bold; border-bottom: 2px solid #b3e5fc; }
+
+        .content { padding: 20px; flex-grow: 1; }
+        
+        .patient-card { background: #fff; border: 2px solid #eee; border-radius: 12px; padding: 20px; margin-bottom: 20px; position: relative; }
+        .patient-speech { font-style: italic; color: #444; font-size: 18px; margin-bottom: 15px; display: block; }
+        
+        .action-label { font-size: 12px; font-weight: bold; color: #999; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        
+        .btn { 
+            width: 100%; padding: 15px; margin-bottom: 10px; border: none; border-radius: 8px; 
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; 
+        }
+        .btn-test { background: #f0f0f0; color: #333; }
+        .btn-test:hover { background: #e0e0e0; }
+        .btn-diag { background: var(--med-green); color: white; margin-top: 10px; }
+        .btn-diag:hover { opacity: 0.9; }
+
+        .result-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); color: white; display: none; 
+            flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 100;
         }
 
-        /* Virallinen yläpalkki */
-        .header { 
-            background: var(--norwegian-red); 
-            padding: 22px 20px; 
-            color: white; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-        }
-        .logo { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; }
-        .title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
-
-        .content { padding: 35px 24px; flex-grow: 1; }
-
-        /* Reitti-osio */
-        .route-section { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 45px; 
-        }
-        .airport-code { font-size: 52px; font-weight: 800; line-height: 1; margin: 0; }
-        .airport-name { font-size: 14px; color: #777; margin-top: 6px; font-weight: 500; }
-        .plane-divider { font-size: 26px; color: var(--norwegian-red); }
-
-        /* Tietoruudukko */
-        .info-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 30px; 
-            margin-bottom: 50px; 
-        }
-        .data-item { display: flex; flex-direction: column; }
-        .label { font-size: 10px; color: #999; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
-        .val { font-size: 22px; font-weight: 700; color: #000; }
-        .red { color: var(--norwegian-red); }
-
-        /* Alaosan koodi ja nimi */
-        .footer-section { 
-            border-top: 1px solid #f0f0f0; 
-            padding-top: 35px; 
-            text-align: center; 
-        }
-        .barcode-sim { 
-            width: 90%; 
-            height: 75px; 
-            background: repeating-linear-gradient(90deg, #111, #111 2px, #fff 2px, #fff 7px);
-            margin: 0 auto 20px;
-            border-radius: 1px;
-        }
-        .pax-name { font-size: 19px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        .pnr { font-size: 12px; color: #888; margin-top: 8px; font-family: monospace; }
-
-        /* --- TÄYSI VASTUUVAPAUTUSLAUSEKE --- */
-        .disclaimer-box { 
-            background: #f8f8f8; 
-            padding: 25px; 
-            border-top: 1px solid #eee; 
-            margin-top: 40px;
-        }
-        .disclaimer-text { 
-            font-size: 10px; 
-            color: #999; 
-            line-height: 1.5; 
-            text-align: left; 
-        }
-        .disclaimer-text b { color: #666; text-transform: uppercase; }
+        .disclaimer { font-size: 10px; color: #bbb; padding: 20px; background: #fafafa; border-top: 1px solid #eee; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-<div class="ticket-wrapper">
-    <div class="header">
-        <div class="logo">norwegian</div>
-        <div class="title">Boarding Pass</div>
+<div class="game-wrapper">
+    <div class="header">🩺 OYS: Päivystyssimulaattori</div>
+    
+    <div class="stats">
+        <div>Pisteet: <span id="score">0</span></div>
+        <div>Potilas: <span id="round">1</span>/3</div>
     </div>
 
     <div class="content">
-        <div class="route-section">
-            <div>
-                <div class="airport-code">HEL</div>
-                <div class="airport-name">Helsinki</div>
-            </div>
-            <div class="plane-divider">✈️</div>
-            <div>
-                <div class="airport-code">NRT</div>
-                <div class="airport-name">Tokyo</div>
-            </div>
+        <div class="patient-card">
+            <span class="action-label">Potilaan oireet:</span>
+            <span class="patient-speech" id="speech">"Lataa peli..."</span>
+            <div id="test-results" style="font-size: 14px; color: var(--med-blue); font-weight: bold;"></div>
         </div>
 
-        <div class="info-grid">
-            <div class="data-item">
-                <span class="label">Flight</span>
-                <span class="val">DY 701</span>
-            </div>
-            <div class="data-item">
-                <span class="label">Date</span>
-                <span class="val" id="date">--</span>
-            </div>
-            <div class="data-item">
-                <span class="label">Boarding</span>
-                <span class="val red" id="time">--</span>
-            </div>
-            <div class="data-item">
-                <span class="label">Gate</span>
-                <span class="val red">24A</span>
-            </div>
-            <div class="data-item">
-                <span class="label">Seat</span>
-                <span class="val">04C</span>
-            </div>
-            <div class="data-item">
-                <span class="label">Sequence</span>
-                <span class="val">0048</span>
-            </div>
-        </div>
+        <span class="action-label">Määrää tutkimus:</span>
+        <button class="btn btn-test" onclick="doTest('lab')">💉 Verikokeet (CRP/PVK)</button>
+        <button class="btn btn-test" onclick="doTest('img')">📷 Kuvantaminen (Röntgen/UÄ)</button>
 
-        <div class="footer-section">
-            <div class="barcode-sim"></div>
-            <div class="pax-name" id="pax-name">MATKUSTAJA / NIMI</div>
-            <div class="pnr">PNR: UOUYNN | CLASS: PREMIUM</div>
-        </div>
+        <span class="action-label" style="margin-top: 20px;">Aseta diagnoosi:</span>
+        <div id="diag-buttons"></div>
     </div>
 
-    <div class="disclaimer-box">
-        <div class="disclaimer-text">
-            <b>TÄYSI VASTUUVAPAUTUSLAUSEKE:</b><br>
-            Tämä verkkosivu on tarkoitettu ainoastaan viihteelliseen ja opetukselliseen simulointikäyttöön. 
-            Sivun kehittäjä, ylläpitäjä tai julkaisija <b>ei ota minkäänlaista vastuuta</b> sivun käytöstä, 
-            sen aiheuttamista väärinkäsityksistä, suorista tai epäsuorista vahingoista, tarkastusmaksuista, 
-            matkustusoikeuden epäämisestä tai mahdollisista juridisista seuraamuksista. 
-            <b>Käyttäjä hyväksyy, ettei ylläpito vastaa mistään saatanan mistään.</b> 
-            Kaikki vastuu on yksinomaan ja täysimääräisesti henkilöllä, joka tätä sivua näyttää tai käyttää.
-        </div>
+    <div class="disclaimer">
+        <b>VASTUUVAPAUTUS:</b> Tämä on peli. Lääketieteelliset tiedot on yksinkertaistettu viihteeksi. 
+        <b>Ylläpito ei vastaa mistään saatanan mistään</b>, jos joku yrittää diagnosoida itseään tämän perusteella. 
+        Mene oikeaan sairaalaan jos olet kipeä.
     </div>
 </div>
 
+<div id="result-overlay" class="result-overlay">
+    <h1 id="res-title">Oikein!</h1>
+    <p id="res-text"></p>
+    <button class="btn" style="width: auto; padding: 10px 40px;" onclick="nextCase()">Seuraava potilas</button>
+</div>
+
 <script>
-    // Haetaan nimi osoitteesta: ?nimi=Etunimi_Sukunimi
-    const params = new URLSearchParams(window.location.search);
-    const nimiParam = params.get('nimi');
-    if (nimiParam) {
-        document.getElementById('pax-name').innerText = nimiParam.replace(/_/g, ' ').toUpperCase();
+    let score = 0;
+    let currentCase = 0;
+
+    const cases = [
+        {
+            speech: "Minulla on kova vatsakipu oikealla alhaalla. Olen myös oksentanut.",
+            lab: "CRP koholla (85), valkosolut korkealla.",
+            img: "UÄ-tutkimus näyttää paksuntuneen umpisuolen.",
+            options: ["Umpisuolentulehdus", "Vatsatauti", "Munuaiskivi"],
+            correct: "Umpisuolentulehdus",
+            fact: "Umpisuolentulehdus (appendisiitti) vaatii usein leikkaushoitoa."
+        },
+        {
+            speech: "Rinnassa tuntuu valtavaa puristusta ja kipu säteilee leukaan.",
+            lab: "Troponiiniarvot (TnT) ovat nousussa.",
+            img: "Sydämen ultraäänessä näkyy liikehäiriö.",
+            options: ["Närästys", "Sydäninfarkti", "Keuhkokuume"],
+            correct: "Sydäninfarkti",
+            fact: "Aika on lihasta – sydäninfarkti vaatii välitöntä hoitoa!"
+        },
+        {
+            speech: "Päätäni särkee sietämättömästi ja valo sattuu silmiin. Niskakin on jäykkä.",
+            lab: "Selkäydinnestenäyte näyttää bakteereja.",
+            img: "Pään tietokonekuvauksessa ei näy verenvuotoa.",
+            options: ["Migreeni", "Aivokalvontulehdus", "Krapula"],
+            correct: "Aivokalvontulehdus",
+            fact: "Meningiitti eli aivokalvontulehdus on hengenvaarallinen hätätilanne."
+        }
+    ];
+
+    function loadCase() {
+        const c = cases[currentCase];
+        document.getElementById('speech').innerText = `"${c.speech}"`;
+        document.getElementById('test-results').innerText = "";
+        document.getElementById('round').innerText = currentCase + 1;
+        
+        const diagDiv = document.getElementById('diag-buttons');
+        diagDiv.innerHTML = "";
+        c.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = "btn btn-diag";
+            btn.innerText = opt;
+            btn.onclick = () => checkDiag(opt);
+            diagDiv.appendChild(btn);
+        });
     }
 
-    // Automaattinen päivämäärä (tämä päivä)
-    const d = new Date();
-    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-    document.getElementById('date').innerText = d.getDate() + " " + months[d.getMonth()];
+    function doTest(type) {
+        const c = cases[currentCase];
+        document.getElementById('test-results').innerText = type === 'lab' ? c.lab : c.img;
+        score -= 10; // Tutkimukset maksavat pisteitä
+        document.getElementById('score').innerText = score;
+    }
 
-    // Boarding time (nykyhetki + 40 min)
-    d.setMinutes(d.getMinutes() + 40);
-    const h = d.getHours().toString().padStart(2, '0');
-    const m = d.getMinutes().toString().padStart(2, '0');
-    document.getElementById('time').innerText = h + ":" + m;
+    function checkDiag(choice) {
+        const c = cases[currentCase];
+        const overlay = document.getElementById('result-overlay');
+        const title = document.getElementById('res-title');
+        const text = document.getElementById('res-text');
+
+        if (choice === c.correct) {
+            score += 100;
+            title.innerText = "OIKEIN! ✅";
+            title.style.color = "var(--med-green)";
+            text.innerText = c.fact;
+        } else {
+            score -= 50;
+            title.innerText = "VÄÄRIN! ❌";
+            title.style.color = "var(--med-red)";
+            text.innerText = `Oikea diagnoosi olisi ollut ${c.correct}. Potilaan tila heikkeni.`;
+        }
+        
+        document.getElementById('score').innerText = score;
+        overlay.style.display = "flex";
+    }
+
+    function nextCase() {
+        currentCase++;
+        document.getElementById('result-overlay').style.display = "none";
+        if (currentCase < cases.length) {
+            loadCase();
+        } else {
+            document.querySelector('.content').innerHTML = `<h2>Kierros päättyi!</h2><p>Lopulliset pisteet: <strong>${score}</strong></p><button class="btn btn-diag" onclick="location.reload()">Pelaa uudelleen</button>`;
+        }
+    }
+
+    loadCase();
 </script>
 
 </body>
