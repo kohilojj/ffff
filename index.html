@@ -60,47 +60,32 @@
     let timeLeft = 45;
     let timer;
 
-    // TÄSSÄ ON TAutilista - Voit kopioida näitä rivejä lisää saavuttaaksesi 300
-    const allDiseases = [ 
-        { q: "Silmäni on aivan punainen, rähmii ja kutisee.", lab: "CRP normaali", img: "Sidekalvo punoittaa voimakkaasti", opt: ["Silmätulehdus", "Kaihi", "Silmänpainetauti"], ans: "Silmätulehdus", info: "Sidekalvotulehdus on yleinen ja tarttuva vaiva." },
-        { q: "Söin ulkomailla ja nyt ripuli on kestänyt 3 päivää ja on veristä.", lab: "F-Bak-seulonta: Positiivinen", img: "Suolistoäänet vilkkaat", opt: ["Salmonella", "Vatsatauti", "Keliakia"], ans: "Salmonella", info: "Ruokamyrkytys vaatii joskus antibiootteja ja nesteytystä." },
-        { q: "Korvaani särkee ja tuntuu kuin siellä olisi vettä.", lab: "Ei otettu", img: "Tärykalvo pullottaa ja on samea", opt: ["Korvatulehdus", "Vaikkutukos", "Kuuloalentuma"], ans: "Korvatulehdus", info: "Välikorvatulehdus on yleinen flunssan jälkitauti." },
-        { q: "Olen 70-vuotias ja en muista kuka olen tai missä olen.", lab: "B12-vitamiini matala", img: "MRI: Aivokutistumaa", opt: ["Muistisairaus", "Sekavuustila", "Masennus"], ans: "Muistisairaus", info: "Alzheimer on yleisin muistisairauden syy." },
-        { q: "Sormeni jäi oven väliin, se on turvonnut ja musta.", lab: "Ei tarvittu", img: "Röntgen: Luu poikki", opt: ["Murtuma", "Mustelma", "Nyrjähdys"], ans: "Murtuma", info: "Murtunut sormi tarvitsee usein lastoituksen." },
-        { q: "Virtsa on tummaa, silmät keltaiset ja kutiaa.", lab: "Maksa-arvot (ALAT) pilvissä", img: "UÄ: Maksatulehdus", opt: ["Hepatiitti", "Munuaiskivi", "Anemia"], ans: "Hepatiitti", info: "Keltaisuus eli ikterus johtuu bilirubiinin kertymisestä." },
-        { q: "Hengittäminen sattuu pistävästi toiselle puolelle rintaa.", lab: "D-dimeeri korkea", img: "Varjoainekuva: Tukos keuhkovaltimossa", opt: ["Keuhkoveritulppa", "Lihaskipu", "Pleuritti"], ans: "Keuhkoveritulppa", info: "Hengenvaarallinen tila, joka vaatii liuotushoitoa." },
-        { q: "Olen laihtunut 10kg kuukaudessa ja yöhikoilen.", lab: "Valkosolut todella korkealla", img: "Perna suurentunut", opt: ["Leukemia", "Stressi", "Keliakia"], ans: "Leukemia", info: "Verisyöpä vaatii nopeaa erikoissairaanhoitoa." },
-        { q: "Naamani on toiselta puolelta 'valunut' alas enkä saa silmää kiinni.", lab: "Borrelia-testi negatiivinen", img: "Ei aivomuutoksia", opt: ["Kasvohalvaus", "Aivoinfarkti", "Migreeni"], ans: "Kasvohalvaus", info: "Bellin pareesi eli hermotulehdus paranee usein itsestään." },
-        { q: "Kuumetta 39 astetta, selkäkipu ja hytinä.", lab: "CRP 150, virtsassa bakteereja", img: "UÄ: Munuaisallas turvonnut", opt: ["Munuaistulehdus", "Flunssa", "Noidannuoli"], ans: "Munuaistulehdus", info: "Pyelonefriitti vaatii suonensisäistä antibioottia." },
-        { q: "Olen väsynyt, kalpea ja hengästyn portaissa.", lab: "Hb 85 (alhainen)", img: "Rautasaturaatio matala", opt: ["Anemia", "Sydänvika", "Laiskuus"], ans: "Anemia", info: "Raudanpuute on yleisin syy matalaan hemoglobiiniin." },
-        { q: "Pieni lapsi on niellyt pariston.", lab: "Ei ehdi ottaa", img: "Röntgen: Pyöreä esine ruokatorvessa", opt: ["Vieras-esine", "Kurkkukipu", "Astma"], ans: "Vieras-esine", info: "Paristo on poistettava välittömästi tähystyksellä!" },
-        { q: "Selkäni meni 'lukkoon' nostaessa laatikkoa.", lab: "Normaali", img: "Röntgen: Ei murtumia", opt: ["Noidannuoli", "Välilevyn pullistuma", "Murtuma"], ans: "Noidannuoli", info: "Lihaslukko hoituu liikkeellä ja kipulääkkeellä." },
-        { q: "Hampaaseen sattuu niin etten pysty nukkumaan.", lab: "Ei otettu", img: "Röntgen: Juurenpäässä varjoa", opt: ["Hammasydintulehdus", "Ientulehdus", "Viisaudenhammas"], ans: "Hammasydintulehdus", info: "Vaatii juurihoidon tai hampaan poiston." },
-        { q: "Sääressä on punainen, leviävä ja kuuma alue.", lab: "CRP 110", img: "Iho on kirkkaanpunainen", opt: ["Ruusu", "Mustelma", "Laskimotukos"], ans: "Ruusu", info: "Erysipelas eli ruusu on bakteerin aiheuttama ihotulehdus." },
-        { q: "Yskin verta ja minulla on kuumetta.", lab: "CRP 120", img: "Röntgen: Varjostuma keuhkossa", opt: ["Keuhkokuume", "Flunssa", "Keuhkosyöpä"], ans: "Keuhkokuume", info: "Bakteerikeuhkokuume hoidetaan antibiooteilla." },
-        { q: "Huimaa niin kovaa, että maailma pyörii ja oksennan.", lab: "Normaali", img: "Tasapainoelinärsytys", opt: ["Hyvänlaatuinen asento-huimaus", "Aivovamma", "Korkea verenpaine"], ans: "Hyvänlaatuinen asento-huimaus", info: "Johtuu sisäkorvan 'kivien' irtoamisesta." },
-        { q: "Lapsi juoksi päin seinää, on sekava ja oksentaa.", lab: "Ei tarvita", img: "CT: Puhdas", opt: ["Aivotärähdys", "Kallo-vamma", "Migreeni"], ans: "Aivotärähdys", info: "Vaatii seurantaa vaurioiden varalta." },
-        { q: "Vatsa on ollut toimimatta viikon ja on pallo-mainen.", lab: "Normaali", img: "Röntgen: Suoli mutkalla", opt: ["Suolitukos", "Ummetus", "Lihavuus"], ans: "Suolitukos", info: "Ileus eli suolitukos voi vaatia leikkausta." },
-        { q: "En saa vedettyä henkeä ja iholla on nokkosihottumaa.", lab: "Ei ehdi", img: "Vinkunaa keuhkoissa", opt: ["Anafylaksia", "Astma", "Paniikki"], ans: "Anafylaksia", info: "Allerginen shokki on henkiuhka." }
-        // ... voit jatkaa tästä samalla tyylillä!
-        { q: "Rintaa puristaa ja hiki valuu, kipu säteilee vasempaan käteen.", lab: "Troponiini koholla", img: "EKG: ST-tason nousu", opt: ["Sydäninfarkti", "Paniikkikohtaus", "Närästys"], ans: "Sydäninfarkti", info: "Infarkti vaatii välitöntä hoitoa!" },
-        { q: "Vatsaan sattuu oikealle alas, hyppiminen tekee kipeää.", lab: "CRP 95, leukosyytit koholla", img: "UÄ: Turvonnut umpisuoli", opt: ["Umpisuolentulehdus", "Vatsatauti", "Munuaiskivi"], ans: "Umpisuolentulehdus", info: "Appendisiitti on yleinen leikkausaihe." },
-        { q: "Päässäni on hirveä jomotus, valo ja äänet sattuvat.", lab: "Normaali", img: "CT: Ei verenvuotoa", opt: ["Migreeni", "Aivoverenvuoto", "Aivotärähdys"], ans: "Migreeni", info: "Migreeni on invalidisoiva särkysairaus." },
-        { q: "Jalkani on turvonnut, punainen ja todella kipeä pohkeesta.", lab: "D-dimeeri korkea", img: "UÄ: Veritulppa havaittu", opt: ["Laskimotukos", "Ruusu", "Lihasrepeämä"], ans: "Laskimotukos", info: "Vaatii verenohennushoitoa." },
-        { q: "Hengittäminen vinkuu ja tuntuu kuin hengittäisin pillin läpi.", lab: "Happisaturaatio 88%", img: "Keuhkojen kuuntelu: Vinkuna", opt: ["Astmakohtaus", "Keuhkokuume", "Sydämen vajaatoiminta"], ans: "Astmakohtaus", info: "Avaava lääke ja kortisoni auttavat." },
-        { q: "Kaaduin liukkaalla ja ranteeni on 'ruokailuveitsi'-asennossa.", lab: "Ei tarvita", img: "Röntgen: Murtuma värttinäluussa", opt: ["Rannemurtuma", "Nyrjähdys", "Jännetulehdus"], ans: "Rannemurtuma", info: "Kipsi ja mahdollisesti leikkaus." },
-        { q: "Janottaa jatkuvasti, pissattaa ja olo on todella väsynyt.", lab: "Verensokeri 25 mmol/l", img: "Virtsassa sokeria", opt: ["Diabetes", "Nestehukka", "Munuaistauti"], ans: "Diabetes", info: "Tyypin 1 diabetes vaatii insuliinia." },
-        { q: "Kurkku on todella kipeä ja siellä on valkoisia pilkkuja.", lab: "Strep-A testi positiivinen", img: "Nielu punoittaa", opt: ["Angiina", "Flunssa", "Pusu-tauti"], ans: "Angiina", info: "Bakteerin aiheuttama nielutulehdus." },
-        { q: "Oksennan verta ja ylävatsaan polttaa kovaa.", lab: "Hemoglobiini laskussa", img: "Gastroskopia: Reikä mahassa", opt: ["Mahahaava", "Vatsatauti", "Ruokamyrkytys"], ans: "Mahahaava", info: "Mahahappo on syövyttänyt limakalvon." },
-        { q: "Söin pähkinää ja nyt kurkku turpoaa umpeen.", lab: "Ei ehdi ottaa!", img: "Kasvot turvoksissa", opt: ["Anafylaksia", "Kurkkukipu", "Myrkytys"], ans: "Anafylaksia", info: "Adrenaliini on hengenpelastava hoito!" }
-        // Lisää tähän 290 muuta tautia...
+    const allDiseases = [
+        { q: "Silmäni on aivan punainen, rähmii ja kutisee.", lab: "CRP normaali", img: "Sidekalvo punoittaa", opt: ["Silmätulehdus", "Kaihi", "Glaukooma"], ans: "Silmätulehdus", info: "Sidekalvotulehdus tarttuu herkästi." },
+        { q: "Rintaa puristaa kuin norsu istuisi päällä.", lab: "Troponiini koholla", img: "EKG: ST-nousut", opt: ["Sydäninfarkti", "Närästys", "Paniikki"], ans: "Sydäninfarkti", info: "Aika on lihasta infarktissa!" },
+        { q: "Pissatessa tuntuu kuin hiekkapaperia tulisi ulos.", lab: "Virtsassa bakteereja", img: "Munuaiset ok", opt: ["Virtsatulehdus", "Munuaiskivi", "Diabetes"], ans: "Virtsatulehdus", info: "Naisilla hyvin yleinen vaiva." },
+        { q: "Oikea alavatsa on niin kipeä, etten voi suoristaa jalkaa.", lab: "Leukosyytit koholla", img: "UÄ: Turvonnut pussi vatsassa", opt: ["Umpisuoli", "Vatsatauti", "Kaasuvaiva"], ans: "Umpisuoli", info: "Tulehtunut umpisuoli leikataan usein." },
+        { q: "Söin huonoa kanaa, nyt ripuli on pelkkää vettä.", lab: "Kalium matala", img: "Suoliäänet vilkkaat", opt: ["Ruokamyrkytys", "Keliakia", "Lakt-intoleranssi"], ans: "Ruokamyrkytys", info: "Nesteytys on hoidon perusta." },
+        { q: "Hengittäminen vinkuu ja happi tuntuu loppuvan.", lab: "PEF-arvot matalat", img: "Keuhkot laajentuneet", opt: ["Astmakohtaus", "Flunssa", "Keuhkosyöpä"], ans: "Astmakohtaus", info: "Avaava lääke auttaa nopeasti." },
+        { q: "Olen todella janoinen ja pissalla saa käydä jatkuvasti.", lab: "Verensokeri 22.0", img: "Ei löydöksiä", opt: ["Diabetes", "Nestehukka", "Anemia"], ans: "Diabetes", info: "Korkea sokeri viittaa diabetekseen." },
+        { q: "Kaaduin jäällä, ranne on mutkalla ja kosketusarka.", lab: "Ei tarvita", img: "Röntgen: Luu poikki", opt: ["Murtuma", "Nyrjähdys", "Mustelma"], ans: "Murtuma", info: "Kipsaus pitää luun paikallaan." },
+        { q: "Naamani on toiselta puolelta veltto, en saa silmää kiinni.", lab: "Normaali", img: "CT: Puhdas", opt: ["Kasvohalvaus", "Aivoverenvuoto", "Migreeni"], ans: "Kasvohalvaus", info: "Bellin pareesi on usein ohimenevä." },
+        { q: "Päässäni on maailman kovin särky, oksennan vain.", lab: "Verenpaine 190/110", img: "CT: Verta aivoissa", opt: ["Aivoverenvuoto", "Krapula", "Väsymys"], ans: "Aivoverenvuoto", info: "Hengenvaarallinen hätätilanne!" },
+        { q: "Jalka on punainen, kuuma ja turvonnut pohkeesta.", lab: "D-dimeeri korkea", img: "UÄ: Tukos laskimossa", opt: ["Veritulppa", "Lihaskipu", "Ruusu"], ans: "Veritulppa", info: "Vaatii verenohennuslääkityksen." },
+        { q: "Nielu on täynnä valkoisia pilkkuja, kuumetta 39C.", lab: "Strep-A positiivinen", img: "Nielu turvoksissa", opt: ["Angiina", "Flunssa", "Allergia"], ans: "Angiina", info: "Hoidetaan penisilliinikuurilla." },
+        { q: "Korvaan särkee niin etten voi nukkua.", lab: "Ei tarvita", img: "Tärykalvo pullottaa", opt: ["Korvatulehdus", "Vaikku", "Kuurous"], ans: "Korvatulehdus", info: "Lapsilla hyvin yleinen vaiva." },
+        { q: "Selkä on niin jumissa, etten pääse sängystä ylös.", lab: "Normaali", img: "Röntgen: Ei muutoksia", opt: ["Noidannuoli", "Murtuma", "Kasvain"], ans: "Noidannuoli", info: "Lihasrentoutus ja liike auttavat." },
+        { q: "Huimaa niin, että seinät kaatuvat päälle.", lab: "Normaali", img: "Tasapainoelin häiriö", opt: ["Asentohuimaus", "Aivokasvain", "Humala"], ans: "Asentohuimaus", info: "Johtuu sisäkorvan 'kivistä'." }
+        // Voit lisätä uusia rivejä tähän!
     ];
 
-    // Sekoitetaan pakka, jotta peli on joka kerta eri
     const gameSet = allDiseases.sort(() => 0.5 - Math.random());
 
     function loadCase() {
-        if(round >= gameSet.length) return alert("Hienoa! Läpäisit kaikki tapaukset.");
+        if(round >= gameSet.length) {
+            document.querySelector('.content').innerHTML = `<h2>Vuoro ohi!</h2><p>Pisteet: ${score}</p><button class="btn btn-diag" onclick="location.reload()">Aloita alusta</button>`;
+            return;
+        }
         const c = gameSet[round];
         document.getElementById('speech').innerText = `"${c.q}"`;
         document.getElementById('test-res').style.display = "none";
@@ -133,7 +118,7 @@
         document.getElementById('score').innerText = score;
         const c = gameSet[round];
         const r = document.getElementById('test-res');
-        r.innerText = t === 'lab' ? c.lab : c.img;
+        r.innerText = t === 'lab' ? `LAB: ${c.lab}` : `KUVAUS: ${c.img}`;
         r.style.display = "block";
     }
 
@@ -152,7 +137,7 @@
             score -= 50;
             title.innerText = "VÄÄRIN! ❌";
             title.style.color = "#f44336";
-            document.getElementById('res-text').innerText = `Oikea diagnoosi oli: ${c.ans}`;
+            document.getElementById('res-text').innerText = choice === "AIKA LOPPUI" ? "Aika loppui! Oikea: " + c.ans : `Väärä diagnoosi. Oikea: ${c.ans}`;
         }
         document.getElementById('score').innerText = score;
         over.style.display = "flex";
