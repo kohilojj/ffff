@@ -2,154 +2,219 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sairaala 300 - Kandidaatti</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAIRAALA 3000 - Diagnosointipeli</title>
     <style>
-        :root { --med-blue: #004a99; --med-green: #2e7d32; --med-red: #c62828; --bg: #f0f2f5; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; }
-        .game-wrapper { width: 100%; max-width: 500px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
-        .header { background: var(--med-blue); color: white; padding: 20px; text-align: center; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; background: #1a237e; color: white; padding: 10px; text-align: center; font-size: 13px; }
-        .stat-num { display: block; font-size: 20px; font-weight: bold; color: #ffeb3b; }
-        .content { padding: 20px; flex-grow: 1; }
-        .case-card { background: #fff; border: 2px solid #e3f2fd; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 8px solid var(--med-blue); }
-        .btn { width: 100%; padding: 15px; margin-bottom: 10px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .btn-test { background: #f5f5f5; color: #333; border: 1px solid #ddd; }
-        .btn-diag { background: var(--med-blue); color: white; }
-        #test-res { background: #fff9c4; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; font-size: 14px; border: 1px solid #fbc02d; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); color: white; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 2000; }
-        .legal { font-size: 9px; color: #999; padding: 15px; background: #f5f5f5; text-align: center; border-top: 1px solid #ddd; }
+        /* --- TYYLIT (CSS) --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1c20;
+            color: #e0e0e0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #game-container {
+            background-color: #2a2d34;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-top: 5px solid #00a8ff;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00a8ff;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #1e2126;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            border: 1px solid #3f444e;
+        }
+
+        #patient-info {
+            background: #343a40;
+            padding: 15px;
+            border-left: 4px solid #fbc531;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .case-box {
+            background: #3f444e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .medical-data {
+            font-style: italic;
+            color: #9c88ff;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 10px;
+        }
+
+        button {
+            background-color: #00a8ff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #0097e6;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none; /* Piilotettu aluksi */
+        }
+
+        .correct { background-color: #27ae60; color: white; }
+        .wrong { background-color: #c0392b; color: white; }
+
+        .prediction {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.2);
+            padding: 5px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
 
-<div class="game-wrapper">
-    <div class="header"><h2>🏥 PÄIVYSTYS 300</h2></div>
-    <div class="stats">
-        <div>PISTEET<span id="score" class="stat-num">0</span></div>
-        <div>POTILAS<span id="round" class="stat-num">1</span></div>
-        <div>AIKA<span id="timer" class="stat-num">45</span></div>
+<div id-="game-container">
+    <h1>🏥 Sairaala 3000</h1>
+
+    <div class="status-bar">
+        <span>Pisteet: <b id="score">0</b></span>
+        <span>Potilas: <b id="patient-count">1</b></span>
     </div>
 
-    <div class="content">
-        <div class="case-card">
-            <div id="speech" style="font-size: 18px; font-weight: 500;">Ladataan...</div>
-            <div id="test-res"></div>
+    <div id="patient-info">
+        <b>POTILASPROFIILI:</b><br>
+        <span id="p-meta">Ladataan tietoja...</span>
+    </div>
+
+    <div class="case-box">
+        <p id="question">Ladataan tapausta...</p>
+        <span class="medical-data" id="lab-data"></span>
+        <span class="medical-data" id="img-data"></span>
+    </div>
+
+    <div class="options-container" id="options">
         </div>
-        <p style="font-size: 12px; font-weight: bold; color: #666;">TUTKIMUKSET:</p>
-        <button class="btn btn-test" onclick="runTest('lab')">💉 Laboratorio (CRP/Veri)</button>
-        <button class="btn btn-test" onclick="runTest('img')">📷 Kuvantaminen (Röntgen/CT)</button>
-        <hr>
-        <div id="diag-options"></div>
-    </div>
 
-    <div class="legal">
-        <b>VASTUUVAPAUS:</b> Peli on huumoria. Ylläpito <b>ei vastaa mistään saatanan mistään</b>. Diagnooseja ei tule käyttää oikeassa elämässä.
-    </div>
+    <div id="result" class="result-box"></div>
+    
+    <button id="next-btn" style="display:none; margin-top:20px; width:100%; background:#fbc531; color:#000;" onclick="seuraavaPotilas()">SEURAAVA POTILAS</button>
 </div>
 
-<div id="msg-overlay" class="overlay">
-    <h1 id="res-title" style="font-size: 50px;"></h1>
-    <p id="res-text" style="font-size: 20px; margin-bottom: 30px;"></p>
-    <button class="btn btn-diag" style="width: 200px;" onclick="nextPatient()">SEURAAVA</button>
-</div>
+<script src="taudit.js"></script>
 
 <script>
-    let score = 0;
-    let round = 0;
-    let timeLeft = 45;
-    let timer;
+    /* --- PELILOGIIKKA (JS) --- */
+    let nykyinenIndeksi = 0;
+    let pisteet = 0;
 
-    const allDiseases = [
-        { q: "Silmäni on aivan punainen, rähmii ja kutisee.", lab: "CRP normaali", img: "Sidekalvo punoittaa", opt: ["Silmätulehdus", "Kaihi", "Glaukooma"], ans: "Silmätulehdus", info: "Sidekalvotulehdus tarttuu herkästi." },
-        { q: "Rintaa puristaa kuin norsu istuisi päällä.", lab: "Troponiini koholla", img: "EKG: ST-nousut", opt: ["Sydäninfarkti", "Närästys", "Paniikki"], ans: "Sydäninfarkti", info: "Aika on lihasta infarktissa!" },
-        { q: "Pissatessa tuntuu kuin hiekkapaperia tulisi ulos.", lab: "Virtsassa bakteereja", img: "Munuaiset ok", opt: ["Virtsatulehdus", "Munuaiskivi", "Diabetes"], ans: "Virtsatulehdus", info: "Naisilla hyvin yleinen vaiva." },
-        { q: "Oikea alavatsa on niin kipeä, etten voi suoristaa jalkaa.", lab: "Leukosyytit koholla", img: "UÄ: Turvonnut pussi vatsassa", opt: ["Umpisuoli", "Vatsatauti", "Kaasuvaiva"], ans: "Umpisuoli", info: "Tulehtunut umpisuoli leikataan usein." },
-        { q: "Söin huonoa kanaa, nyt ripuli on pelkkää vettä.", lab: "Kalium matala", img: "Suoliäänet vilkkaat", opt: ["Ruokamyrkytys", "Keliakia", "Lakt-intoleranssi"], ans: "Ruokamyrkytys", info: "Nesteytys on hoidon perusta." },
-        { q: "Hengittäminen vinkuu ja happi tuntuu loppuvan.", lab: "PEF-arvot matalat", img: "Keuhkot laajentuneet", opt: ["Astmakohtaus", "Flunssa", "Keuhkosyöpä"], ans: "Astmakohtaus", info: "Avaava lääke auttaa nopeasti." },
-        { q: "Olen todella janoinen ja pissalla saa käydä jatkuvasti.", lab: "Verensokeri 22.0", img: "Ei löydöksiä", opt: ["Diabetes", "Nestehukka", "Anemia"], ans: "Diabetes", info: "Korkea sokeri viittaa diabetekseen." },
-        { q: "Kaaduin jäällä, ranne on mutkalla ja kosketusarka.", lab: "Ei tarvita", img: "Röntgen: Luu poikki", opt: ["Murtuma", "Nyrjähdys", "Mustelma"], ans: "Murtuma", info: "Kipsaus pitää luun paikallaan." },
-        { q: "Naamani on toiselta puolelta veltto, en saa silmää kiinni.", lab: "Normaali", img: "CT: Puhdas", opt: ["Kasvohalvaus", "Aivoverenvuoto", "Migreeni"], ans: "Kasvohalvaus", info: "Bellin pareesi on usein ohimenevä." },
-        { q: "Päässäni on maailman kovin särky, oksennan vain.", lab: "Verenpaine 190/110", img: "CT: Verta aivoissa", opt: ["Aivoverenvuoto", "Krapula", "Väsymys"], ans: "Aivoverenvuoto", info: "Hengenvaarallinen hätätilanne!" },
-        { q: "Jalka on punainen, kuuma ja turvonnut pohkeesta.", lab: "D-dimeeri korkea", img: "UÄ: Tukos laskimossa", opt: ["Veritulppa", "Lihaskipu", "Ruusu"], ans: "Veritulppa", info: "Vaatii verenohennuslääkityksen." },
-        { q: "Nielu on täynnä valkoisia pilkkuja, kuumetta 39C.", lab: "Strep-A positiivinen", img: "Nielu turvoksissa", opt: ["Angiina", "Flunssa", "Allergia"], ans: "Angiina", info: "Hoidetaan penisilliinikuurilla." },
-        { q: "Korvaan särkee niin etten voi nukkua.", lab: "Ei tarvita", img: "Tärykalvo pullottaa", opt: ["Korvatulehdus", "Vaikku", "Kuurous"], ans: "Korvatulehdus", info: "Lapsilla hyvin yleinen vaiva." },
-        { q: "Selkä on niin jumissa, etten pääse sängystä ylös.", lab: "Normaali", img: "Röntgen: Ei muutoksia", opt: ["Noidannuoli", "Murtuma", "Kasvain"], ans: "Noidannuoli", info: "Lihasrentoutus ja liike auttavat." },
-        { q: "Huimaa niin, että seinät kaatuvat päälle.", lab: "Normaali", img: "Tasapainoelin häiriö", opt: ["Asentohuimaus", "Aivokasvain", "Humala"], ans: "Asentohuimaus", info: "Johtuu sisäkorvan 'kivistä'." }
-        // Voit lisätä uusia rivejä tähän!
-    ];
+    function aloitaPeli() {
+        if (allDiseases.length === 0) return;
+        paivitaNaytto();
+    }
 
-    const gameSet = allDiseases.sort(() => 0.5 - Math.random());
-
-    function loadCase() {
-        if(round >= gameSet.length) {
-            document.querySelector('.content').innerHTML = `<h2>Vuoro ohi!</h2><p>Pisteet: ${score}</p><button class="btn btn-diag" onclick="location.reload()">Aloita alusta</button>`;
-            return;
-        }
-        const c = gameSet[round];
-        document.getElementById('speech').innerText = `"${c.q}"`;
-        document.getElementById('test-res').style.display = "none";
-        document.getElementById('round').innerText = round + 1;
+    function paivitaNaytto() {
+        const tauti = allDiseases[nykyinenIndeksi];
+        const potilas = patientProfiles[Math.floor(Math.random() * patientProfiles.length)];
         
-        const opts = document.getElementById('diag-options');
-        opts.innerHTML = "";
-        c.opt.forEach(o => {
-            const b = document.createElement('button');
-            b.className = "btn btn-diag";
-            b.innerText = o;
-            b.onclick = () => check(o);
-            opts.appendChild(b);
+        // Piilota vanhat tulokset
+        document.getElementById("result").style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+
+        // Potilasmetatiedot
+        document.getElementById("p-meta").innerHTML = `Ikä: ${potilas.age}v | Sukupuoli: ${potilas.sex} | Ammatti: ${potilas.job}`;
+        
+        // Kysymys ja labrat
+        document.getElementById("question").innerText = tauti.q;
+        document.getElementById("lab-data").innerText = "🧪 Labra: " + tauti.lab;
+        document.getElementById("img-data").innerText = "📸 Kuva: " + tauti.img;
+
+        // Vaihtoehdot
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+        
+        tauti.opt.forEach(vaihtoehto => {
+            const nappi = document.createElement("button");
+            nappi.innerText = vaihtoehto;
+            nappi.onclick = () => tarkistaVastaus(vaihtoehto, tauti);
+            optionsDiv.appendChild(nappi);
         });
-        resetTimer();
     }
 
-    function resetTimer() {
-        timeLeft = 45;
-        clearInterval(timer);
-        timer = setInterval(() => {
-            timeLeft--;
-            document.getElementById('timer').innerText = timeLeft;
-            if(timeLeft <= 0) { clearInterval(timer); check("AIKA LOPPUI"); }
-        }, 1000);
-    }
-
-    function runTest(t) {
-        score -= 10;
-        document.getElementById('score').innerText = score;
-        const c = gameSet[round];
-        const r = document.getElementById('test-res');
-        r.innerText = t === 'lab' ? `LAB: ${c.lab}` : `KUVAUS: ${c.img}`;
-        r.style.display = "block";
-    }
-
-    function check(choice) {
-        clearInterval(timer);
-        const c = gameSet[round];
-        const over = document.getElementById('msg-overlay');
-        const title = document.getElementById('res-title');
+    function tarkistaVastaus(valinta, tauti) {
+        const tulosDiv = document.getElementById("result");
+        tulosDiv.style.display = "block";
         
-        if(choice === c.ans) {
-            score += 100 + timeLeft;
-            title.innerText = "OIKEIN! ✅";
-            title.style.color = "#4caf50";
-            document.getElementById('res-text').innerText = c.info;
+        const ennusteTeksti = tauti.vakava 
+            ? `<span class="prediction">⚠️ ENNUSTE: Kriittinen! Hoitoaikaa jäljellä: ${tauti.aika}</span>`
+            : `<span class="prediction">📅 ENNUSTE: Toipumisaika: ${tauti.aika}</span>`;
+
+        if (valinta === tauti.ans) {
+            tulosDiv.className = "result-box correct";
+            tulosDiv.innerHTML = `<b>OIKEIN!</b><br>${tauti.info}${ennusteTeksti}`;
+            pisteet += 10;
+            document.getElementById("score").innerText = pisteet;
         } else {
-            score -= 50;
-            title.innerText = "VÄÄRIN! ❌";
-            title.style.color = "#f44336";
-            document.getElementById('res-text').innerText = choice === "AIKA LOPPUI" ? "Aika loppui! Oikea: " + c.ans : `Väärä diagnoosi. Oikea: ${c.ans}`;
+            tulosDiv.className = "result-box wrong";
+            tulosDiv.innerHTML = `<b>VÄÄRÄ DIAGNOOSI!</b><br>Oikea vastaus oli: ${tauti.ans}. Potilaan tila heikkeni.`;
         }
-        document.getElementById('score').innerText = score;
-        over.style.display = "flex";
+
+        document.getElementById("next-btn").style.display = "block";
+        // Estä useat klikkaukset
+        const nappeja = document.querySelectorAll("#options button");
+        nappeja.forEach(n => n.disabled = true);
     }
 
-    function nextPatient() {
-        round++;
-        document.getElementById('msg-overlay').style.display = "none";
-        loadCase();
+    function seuraavaPotilas() {
+        nykyinenIndeksi++;
+        if (nykyinenIndeksi < allDiseases.length) {
+            document.getElementById("patient-count").innerText = nykyinenIndeksi + 1;
+            paivitaNaytto();
+        } else {
+            alert("Kaikki potilaat hoidettu! Pisteet: " + pisteet);
+        }
     }
 
-    loadCase();
+    // Käynnistä
+    window.onload = aloitaPeli;
 </script>
+
 </body>
 </html>
