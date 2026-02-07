@@ -3,141 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sairaala OS | Clinical Fix</title>
+    <title>Sairaala OS | Clinical Monitor</title>
     <style>
         :root {
-            --medical-blue: #0080ff;
-            --clinical-bg: #0b0e14;
-            --panel-bg: #161a23;
-            --text-main: #e0e6ed;
+            --medical-cyan: #00f2ff;
+            --medical-green: #00ff88;
+            --clinical-bg: #05070a;
+            --panel-bg: #10141d;
             --danger: #ff3e3e;
-            --success: #00e676;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             background-color: var(--clinical-bg);
-            color: var(--text-main);
+            color: var(--medical-cyan);
             margin: 0;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* Yläpalkki */
-        header {
+        /* --- SYDÄNKÄYRÄ (EKG) --- */
+        .ekg-container {
+            height: 120px;
             background: #000;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 2px solid var(--medical-blue);
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        main {
-            flex: 1;
-            padding: 12px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        /* --- SELKÄRANKA-SKANNERI --- */
-        .scanner-layout {
-            display: flex;
-            background: var(--panel-bg);
-            border-radius: 10px;
-            padding: 12px;
-            gap: 15px;
-            border: 1px solid #2a313d;
-        }
-
-        .spine-box {
+            border: 1px solid #1a2533;
+            border-radius: 8px;
             position: relative;
-            width: 70px;
-            height: 220px;
-            background: #000;
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            padding: 10px 0;
-            border: 1px solid #333;
+            overflow: hidden;
+            margin-bottom: 15px;
         }
 
-        /* Piirretään nikamat yksitellen div-laatikoilla */
-        .vertebra {
-            width: 25px;
-            height: 8px;
-            background: #2a313d;
-            border-radius: 2px;
-            border: 1px solid var(--medical-blue);
-            opacity: 0.6;
-        }
-
-        .pain-point {
+        .ekg-line {
             position: absolute;
-            width: 18px;
-            height: 18px;
-            background: var(--danger);
-            border-radius: 50%;
-            box-shadow: 0 0 15px var(--danger), 0 0 30px var(--danger);
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            display: none;
-            animation: pulse 0.8s infinite;
+            top: 50%;
+            width: 100%;
+            height: 2px;
+            background: var(--medical-green);
+            box-shadow: 0 0 10px var(--medical-green);
+            animation: moveLine 2s linear infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: translateX(-50%) scale(1); opacity: 1; }
-            50% { transform: translateX(-50%) scale(1.5); opacity: 0.5; }
-            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        @keyframes moveLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
-        /* --- TEKSTITIEDOT --- */
-        .info-side { flex: 1; }
-        .label { font-size: 0.65rem; color: #6e7a8d; text-transform: uppercase; margin-bottom: 3px; }
-        .data-text { font-size: 1rem; font-weight: bold; margin-bottom: 10px; }
+        /* Elintoiminto-palkki */
+        .vital-stats {
+            display: flex;
+            justify-content: space-around;
+            background: var(--panel-bg);
+            padding: 10px;
+            border-radius: 8px;
+            border-bottom: 2px solid var(--medical-cyan);
+            margin-bottom: 15px;
+        }
 
-        .symptom-box {
+        .stat-box { text-align: center; }
+        .stat-label { font-size: 0.7rem; color: #557; }
+        .stat-value { font-size: 1.2rem; font-weight: bold; color: var(--medical-green); }
+
+        /* Potilastiedot */
+        .patient-card {
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 10px;
+            flex: 1;
+            border: 1px solid #1a2533;
+        }
+
+        .symptom-display {
             background: rgba(0,0,0,0.5);
-            padding: 12px;
-            border-radius: 6px;
-            border-left: 3px solid var(--medical-blue);
-            font-size: 1rem;
-            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #2a3a4a;
+            color: #fff;
+            margin-top: 10px;
+            font-size: 1.1rem;
         }
 
-        /* Napit */
-        .diag-buttons {
+        /* Diagnoosinapit */
+        .btn-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        button.choice {
-            background: #1c222d;
-            border: 1px solid #364050;
-            color: white;
-            padding: 16px;
-            border-radius: 8px;
+        .diag-btn {
+            background: #1a2533;
+            border: 1px solid var(--medical-cyan);
+            color: var(--medical-cyan);
+            padding: 15px;
+            border-radius: 6px;
+            cursor: pointer;
             font-weight: bold;
             text-align: left;
-            cursor: pointer;
+            text-transform: uppercase;
         }
 
-        /* Raportti-ikkuna */
-        #report {
+        .diag-btn:active { background: var(--medical-cyan); color: #000; }
+
+        /* Raportti */
+        #report-screen {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9);
-            z-index: 1000;
+            z-index: 999;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -145,61 +121,54 @@
 
         .report-box {
             background: var(--panel-bg);
-            padding: 25px;
-            border-radius: 15px;
-            border-top: 5px solid var(--medical-blue);
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid var(--medical-cyan);
             text-align: center;
-            max-width: 400px;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div id="rank">HARJOITTELIJA</div>
-    <div style="color:var(--medical-blue)">MEDICAL SYSTEM v4.7</div>
-    <div id="score-display">Pisteet: 0</div>
-</header>
+<div class="vital-stats">
+    <div class="stat-box">
+        <div class="stat-label">HR (Pulssi)</div>
+        <div class="stat-value" id="stat-hr">72</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">BP (Paine)</div>
+        <div class="stat-value" id="stat-bp">120/80</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-label">SpO2 (Happi)</div>
+        <div class="stat-value" id="stat-spo2">98%</div>
+    </div>
+</div>
 
-<main>
-    <div class="scanner-layout">
-        <div class="spine-box">
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div class="vertebra"></div>
-            <div id="pain-point" class="pain-point"></div>
-        </div>
+<div class="ekg-container">
+    <div class="ekg-line"></div>
+    <div style="position:absolute; top:5px; left:5px; font-size:0.6rem;">REAL-TIME EKG MONITOR</div>
+</div>
 
-        <div class="info-side">
-            <div class="label">Potilas</div>
-            <div class="data-text" id="p-meta">Ladataan...</div>
-            
-            <div class="label">Anamneesi</div>
-            <div class="symptom-box" id="question">Odotetaan...</div>
-            
-            <div class="label">Diagnostiikka</div>
-            <div id="lab-text" style="color:var(--medical-blue); font-size: 0.9rem; font-weight: bold;">---</div>
-        </div>
+<main class="patient-card">
+    <div style="font-size: 0.8rem; color: #557;">POTILASPROFIILI:</div>
+    <div id="p-info" style="font-size: 1.1rem; font-weight: bold; margin-bottom: 10px;">Ladataan...</div>
+    
+    <div style="font-size: 0.8rem; color: #557;">ANAMNEESI / LÖYDÖKSET:</div>
+    <div class="symptom-display" id="question">Odotetaan tapausta...</div>
+    
+    <div style="margin-top:15px; font-size: 0.9rem;">
+        <span style="color:var(--medical-cyan)">LAB:</span> <span id="lab-data">---</span>
     </div>
 
-    <div class="label">Tee Diagnoosi</div>
-    <div class="diag-buttons" id="options"></div>
+    <div class="btn-grid" id="options"></div>
 </main>
 
-<div id="report">
+<div id="report-screen">
     <div class="report-box">
         <h2 id="r-title">TULOS</h2>
         <p id="r-text"></p>
-        <button onclick="next()" style="width:100%; padding:15px; background:var(--medical-blue); color:white; border:none; border-radius:8px; font-weight:bold;">SEURAAVA POTILAS</button>
+        <button onclick="nextCase()" style="width:100%; padding:20px; background:var(--medical-cyan); color:#000; border:none; font-weight:bold; cursor:pointer;">SEURAAVA POTILAS</button>
     </div>
 </div>
 
@@ -207,63 +176,63 @@
 
 <script>
     let score = 0;
-    let index = 0;
+    let currentIdx = 0;
 
-    function movePain(tauti) {
-        const p = document.getElementById("pain-point");
-        p.style.display = "block";
-        const q = (tauti.q + " " + tauti.img).toLowerCase();
-        
-        // Säädetään sijainti oireen mukaan (%)
-        if (q.includes("niska") || q.includes("pää") || q.includes("kurkku")) p.style.top = "10%";
-        else if (q.includes("rinta") || q.includes("lapa") || q.includes("käsi")) p.style.top = "30%";
-        else if (q.includes("vatsa") || q.includes("keliakia") || q.includes("suoli")) p.style.top = "50%";
-        else if (q.includes("selkä") || q.includes("skolioosi") || q.includes("munuais")) p.style.top = "70%";
-        else if (q.includes("nilkka") || q.includes("varvas") || q.includes("jalka") || q.includes("akilles")) p.style.top = "90%";
-        else p.style.top = "50%";
+    function randomizeVitals(vakava) {
+        // Jos tauti on vakava, elintoiminnot ovat huonommat
+        if(vakava) {
+            document.getElementById("stat-hr").innerText = Math.floor(Math.random() * (160 - 110) + 110);
+            document.getElementById("stat-bp").innerText = "180/110";
+            document.getElementById("stat-spo2").innerText = Math.floor(Math.random() * (92 - 85) + 85) + "%";
+            document.getElementById("stat-hr").style.color = "var(--danger)";
+        } else {
+            document.getElementById("stat-hr").innerText = Math.floor(Math.random() * (90 - 65) + 65);
+            document.getElementById("stat-bp").innerText = "124/82";
+            document.getElementById("stat-spo2").innerText = "98%";
+            document.getElementById("stat-hr").style.color = "var(--medical-green)";
+        }
     }
 
     function render() {
-        const t = allDiseases[index];
+        const t = allDiseases[currentIdx];
         const p = patientProfiles[Math.floor(Math.random() * patientProfiles.length)];
         
-        document.getElementById("p-meta").innerText = `${p.age}v ${p.sex} | ${p.job}`;
+        document.getElementById("report-screen").style.display = "none";
+        document.getElementById("p-info").innerText = `${p.age}v ${p.sex} | ${p.job}`;
         document.getElementById("question").innerText = t.q;
-        document.getElementById("lab-text").innerText = "🧪 " + t.lab + (t.img !== "Normaali" ? " | 📸 " + t.img : "");
-        document.getElementById("report").style.display = "none";
+        document.getElementById("lab-data").innerText = t.lab + " | " + t.img;
         
-        movePain(t);
+        randomizeVitals(t.vakava);
 
         const optDiv = document.getElementById("options");
         optDiv.innerHTML = "";
         t.opt.forEach(o => {
             const b = document.createElement("button");
-            b.className = "choice";
-            b.innerText = o;
+            b.className = "diag-btn";
+            b.innerText = "> " + o;
             b.onclick = () => check(o, t);
             optDiv.appendChild(b);
         });
     }
 
     function check(val, t) {
-        const r = document.getElementById("report");
-        r.style.display = "flex";
+        const report = document.getElementById("report-screen");
+        report.style.display = "flex";
         if(val === t.ans) {
             score += 10;
             document.getElementById("r-title").innerText = "OIKEIN";
-            document.getElementById("r-title").style.color = "var(--success)";
-            document.getElementById("r-text").innerText = t.info;
+            document.getElementById("r-title").style.color = "var(--medical-green)";
+            document.getElementById("r-text").innerText = t.info + "\n\nEnnuste: " + t.aika;
         } else {
-            document.getElementById("r-title").innerText = "VIRHE";
+            document.getElementById("r-title").innerText = "VÄÄRIN";
             document.getElementById("r-title").style.color = "var(--danger)";
-            document.getElementById("r-text").innerText = `Oikea diagnoosi: ${t.ans}`;
+            document.getElementById("r-text").innerText = `Potilaan tila kriittinen. Oikea diagnoosi: ${t.ans}`;
         }
-        document.getElementById("score-display").innerText = "Pisteet: " + score;
     }
 
-    function next() {
-        index++;
-        if(index < allDiseases.length) render();
+    function nextCase() {
+        currentIdx++;
+        if(currentIdx < allDiseases.length) render();
         else alert("Työpäivä loppui!");
     }
 
