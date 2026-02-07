@@ -3,237 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MED-OS ULTIMATE | Mobile</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Sairaala OS | Anatomia v4.5</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Roboto:wght@300;500;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-blue: #00d2ff;
-            --neon-green: #2ed573;
-            --neon-red: #ff4757;
-            --dark-core: #0a0c10;
-            --panel-bg: rgba(30, 34, 45, 0.95);
+            --medical-blue: #0080ff;
+            --clinical-bg: #0b0e14;
+            --panel-bg: #161a23;
+            --text-main: #e0e6ed;
+            --danger: #ff3e3e;
+            --success: #00e676;
         }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: var(--dark-core);
-            background-image: 
-                radial-gradient(circle at 50% 50%, #1a2a3a 0%, #0a0c10 100%);
-            color: white;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--clinical-bg);
+            color: var(--text-main);
             margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
 
-        /* Animaatiot */
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(1000%); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 5px #ff4757; }
-            50% { box-shadow: 0 0 20px #ff4757; }
-            100% { box-shadow: 0 0 5px #ff4757; }
-        }
-
-        /* Mobiiliystävällinen Navigaatio */
-        nav {
-            background: rgba(22, 27, 34, 0.9);
-            padding: 10px 15px;
+        header {
+            background: #000;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--neon-blue);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--medical-blue);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
         }
 
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: var(--neon-blue); }
-
-        /* Pääsisältö */
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: auto;
+        main {
+            flex: 1;
             padding: 15px;
-            animation: fadeIn 0.8s ease-out;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        /* Potilas-kortti */
-        .card {
+        /* ANATOMIA SKANNERI */
+        .scanner-container {
+            display: flex;
             background: var(--panel-bg);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        .id-badge {
-            font-size: 0.7rem;
-            background: var(--neon-blue);
-            color: black;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        .symptom-text {
-            font-size: 1.3rem;
-            line-height: 1.4;
-            color: #d1d8e0;
-            margin: 15px 0;
-        }
-
-        /* Labratiedot rinnakkain mobiilissa */
-        .data-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .data-item {
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
             border-radius: 8px;
-            font-size: 0.85rem;
-            border-left: 3px solid var(--neon-blue);
+            padding: 15px;
+            gap: 15px;
+            border: 1px solid #2a313d;
         }
 
-        /* Napit (Isot mobiilikäyttöön) */
-        .option-list {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .diag-btn {
-            background: linear-gradient(145deg, #252a36, #1e222d);
-            border: 1px solid #3e4451;
-            color: white;
-            padding: 18px;
-            border-radius: 12px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-        }
-
-        .diag-btn:active { transform: scale(0.95); background: var(--neon-blue); color: black; }
-
-        /* Tulosalue */
-        #result-display {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .critical-anim { animation: pulse-red 1.5s infinite; }
-
-        /* Musiikki-ohjain */
-        .music-ctrl {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--neon-blue);
-            color: black;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        .spine-image-box {
+            position: relative;
+            width: 80px;
+            height: 200px;
+            background: #000;
+            border-radius: 5px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--neon-blue);
-            z-index: 999;
+            padding: 5px;
         }
 
+        .spine-image-box img {
+            height: 100%;
+            opacity: 0.7;
+        }
+
+        /* Kipupisteen animaatio */
+        .pain-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--danger);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--danger);
+            animation: pulse-pain 1s infinite;
+            display: none; /* Näytetään vain jos tarpeen */
+        }
+
+        @keyframes pulse-pain {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .patient-info-side {
+            flex: 1;
+        }
+
+        .label { font-size: 0.7rem; color: #6e7a8d; text-transform: uppercase; letter-spacing: 1px; }
+        .data-value { font-size: 1rem; font-weight: 500; margin-bottom: 5px; }
+
+        .symptom-display {
+            background: #000;
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 4px solid var(--medical-blue);
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .diag-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .btn-action {
+            background: #1c222d;
+            border: 1px solid #364050;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #clinical-report {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .report-content {
+            background: var(--panel-bg);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 50px;
+            border-top: 5px solid var(--medical-blue);
+        }
+
+        @media (min-width: 600px) {
+            .diag-grid { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<audio id="bgMusic" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" type="audio/mpeg">
-</audio>
+<header>
+    <div id="rank-display">HARJOITTELIJA</div>
+    <div>SCORE: <span id="score">0</span></div>
+    <div id="clock">00:00:00</div>
+</header>
 
-<nav>
-    <div class="logo">MED-OS <span id="clock">12:00</span></div>
-    <div style="font-size: 0.8rem;">Pisteet: <span id="score" style="color:var(--neon-blue)">0</span></div>
-</nav>
+<main>
+    <div class="scanner-container" id="monitor">
+        <div class="spine-image-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/1141/1141873.png" alt="Spine">
+            <div id="pain-point" class="pain-point"></div>
+        </div>
 
-<div class="container">
-    <div class="card">
-        <span class="id-badge">POTILAS ANALYYSI</span>
-        <h2 id="p-meta" style="margin: 10px 0; color: var(--neon-blue);">Ladataan...</h2>
-        <p class="symptom-text" id="question">Valmistellaan diagnostiikkaa...</p>
-        
-        <div class="data-grid">
-            <div class="data-item">🧪 <span id="lab-data">---</span></div>
-            <div class="data-item">📸 <span id="img-data">---</span></div>
+        <div class="patient-info-side">
+            <div class="label">Potilasprofiili</div>
+            <div class="data-value" id="p-meta">MÄÄRITETÄÄN...</div>
+            
+            <div class="label">Anamneesi</div>
+            <div class="symptom-display" id="question">Odotetaan...</div>
+            
+            <div style="margin-top:10px;">
+                <div class="label">Labratiedot</div>
+                <div id="lab-data" style="font-size:0.85rem; color:var(--medical-blue)">---</div>
+            </div>
         </div>
     </div>
 
-    <div class="option-list" id="options">
-        </div>
+    <div class="label">Valitse Diagnoosi</div>
+    <div class="diag-grid" id="options"></div>
+</main>
 
-    <div id="result-display"></div>
-    
-    <button id="next-btn" style="display:none; width:100%; padding:20px; margin-top:15px; background:var(--neon-green); border:none; border-radius:12px; font-weight:bold; font-size:1.2rem;" onclick="seuraavaPotilas()">SEURAAVA POTILAS >></button>
+<div id="clinical-report">
+    <div class="report-content">
+        <h2 id="report-title">TULOS</h2>
+        <p id="report-text"></p>
+        <button onclick="seuraavaPotilas()" style="width:100%; padding:20px; background:var(--medical-blue); border:none; color:white; font-weight:bold; border-radius:8px;">JATKA</button>
+    </div>
 </div>
-
-<div class="music-ctrl" onclick="toggleMusic()">🎵</div>
 
 <script src="taudit.js"></script>
 
 <script>
     let score = 0;
     let index = 0;
-    let musicPlaying = false;
 
-    // Päivitä kello
-    setInterval(() => {
-        const d = new Date();
-        document.getElementById("clock").innerText = d.getHours() + ":" + (d.getMinutes()<10?'0':'') + d.getMinutes();
-    }, 1000);
+    function updateClock() {
+        document.getElementById("clock").innerText = new Date().toLocaleTimeString('fi-FI');
+    }
+    setInterval(updateClock, 1000);
 
-    function aloita() {
-        if (typeof allDiseases !== 'undefined') render();
+    // Funktio, joka asettaa kipupisteen sijainnin selkärangassa
+    function asetaKipupiste(tauti) {
+        const point = document.getElementById("pain-point");
+        point.style.display = "block";
+        
+        let topPos = "50%"; // Oletus keskellä
+        
+        // Logiikka: mihin kohtaan piste laitetaan oireen mukaan
+        const q = tauti.q.toLowerCase();
+        if (q.includes("niska") || q.includes("kurkku") || q.includes("pää")) topPos = "15%";
+        else if (q.includes("lapa") || q.includes("rinta")) topPos = "35%";
+        else if (q.includes("vatsa") || q.includes("selkä")) topPos = "60%";
+        else if (q.includes("nilkka") || q.includes("varvas") || q.includes("jalka")) topPos = "90%";
+        else if (q.includes("polvi")) topPos = "80%";
+        else topPos = "50%";
+
+        point.style.top = topPos;
     }
 
     function render() {
         const t = allDiseases[index];
         const p = patientProfiles[Math.floor(Math.random() * patientProfiles.length)];
         
-        document.getElementById("result-display").style.display = "none";
-        document.getElementById("next-btn").style.display = "none";
         document.getElementById("p-meta").innerText = `${p.age}v ${p.sex} | ${p.job}`;
         document.getElementById("question").innerText = t.q;
-        document.getElementById("lab-data").innerText = t.lab;
-        document.getElementById("img-data").innerText = t.img;
+        document.getElementById("lab-data").innerText = "🧪 " + t.lab + " | 📸 " + t.img;
+        document.getElementById("clinical-report").style.display = "none";
+
+        asetaKipupiste(t);
 
         const optDiv = document.getElementById("options");
         optDiv.innerHTML = "";
-        
         t.opt.forEach(o => {
             const b = document.createElement("button");
-            b.className = "diag-btn";
+            b.className = "btn-action";
             b.innerText = o;
             b.onclick = () => check(o, t);
             optDiv.appendChild(b);
@@ -241,46 +238,30 @@
     }
 
     function check(val, t) {
-        const res = document.getElementById("result-display");
-        res.style.display = "block";
+        const report = document.getElementById("clinical-report");
+        report.style.display = "block";
         const correct = val === t.ans;
 
         if(correct) {
             score += 10;
             document.getElementById("score").innerText = score;
-            res.style.background = "rgba(46, 213, 115, 0.2)";
-            res.innerHTML = `<h2 style="color:var(--neon-green)">DIAGNOOSI VARMISTETTU</h2><p>${t.info}</p>`;
+            document.getElementById("report-title").innerText = "OIKEIN";
+            document.getElementById("report-title").style.color = "var(--success)";
+            document.getElementById("report-text").innerText = t.info;
         } else {
-            res.style.background = "rgba(255, 71, 87, 0.2)";
-            res.innerHTML = `<h2 style="color:var(--neon-red)">DIAGNOOSIVIRHE</h2><p>Oikea vaste: ${t.ans}</p>`;
+            document.getElementById("report-title").innerText = "VIRHE";
+            document.getElementById("report-title").style.color = "var(--danger)";
+            document.getElementById("report-text").innerText = `Oikea diagnoosi: ${t.ans}`;
         }
-
-        if(t.vakava) res.classList.add("critical-anim");
-        else res.classList.remove("critical-anim");
-
-        res.innerHTML += `<div style="margin-top:10px; font-weight:bold; color:var(--neon-blue)">ENNUSTE: ${t.aika}</div>`;
-
-        document.getElementById("next-btn").style.display = "block";
-        document.querySelectorAll(".diag-btn").forEach(b => b.disabled = true);
-        
-        // Värinä mobiilissa jos laite tukee
-        if ("vibrate" in navigator) navigator.vibrate(correct ? 50 : [100, 50, 100]);
     }
 
     function seuraavaPotilas() {
         index++;
         if(index < allDiseases.length) render();
-        else alert("Työvuoro ohi! Pisteet: " + score);
+        else alert("Peli loppui! Pisteet: " + score);
     }
 
-    function toggleMusic() {
-        const m = document.getElementById("bgMusic");
-        if(musicPlaying) { m.pause(); } 
-        else { m.play(); }
-        musicPlaying = !musicPlaying;
-    }
-
-    window.onload = aloita;
+    window.onload = () => { if(typeof allDiseases !== 'undefined') render(); };
 </script>
 </body>
 </html>
