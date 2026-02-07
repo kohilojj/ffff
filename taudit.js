@@ -2,7 +2,16 @@
 // 🏥 SAIRAALA 300 - TAUTILISTA
 // ==========================================
 
-const raakaData = [
+const raakaData = [{ q: "Lapsi löi pään asfalttiin, on uninen ja oksentaa.", l: "Normaali", i: "CT: Ei vuotoa", o: ["Aivotärähdys", "Migreeni", "Flunssa"], a: "Aivotärähdys", info: "Vaatii seurantaa kotona tai osastolla." },
+    { q: "Selkäkipu on sietämätön ja säteilee nivusiin, pissa on punaista.", l: "Virtsassa verta", i: "UÄ: Kivi munuaisessa", o: ["Munuaiskivi", "Lumbago", "Virtsatulehdus"], a: "Munuaiskivi", info: "Kivi raapii virtsateitä mennessään." },
+    { q: "Olen kalpea, väsynyt ja hengästyn helposti.", l: "Hb 90 (alhainen)", i: "Verisolu-muutoksia", o: ["Anemia", "Laiskuus", "Sydänvika"], a: "Anemia", info: "Raudanpuute on yleisin syy." },
+    { q: "Pohje on turvonnut ja todella kipeä kävellessä.", l: "D-dimeeri koholla", i: "UÄ: Veritulppa pohkeessa", o: ["Laskimotukos", "Ruusu", "Suonenveto"], a: "Laskimotukos", info: "Tukos voi kulkeutua keuhkoihin." },
+    { q: "Kurkku on niin kipeä, etten saa nieltyä edes vettä.", l: "Strep-A positiivinen", i: "Nielu punainen", o: ["Angiina", "Flunssa", "Allergia"], a: "Angiina", info: "Bakteeritulehdus vaatii antibiootin." },
+    { q: "Käsi osui uuniin, nousi isoja vesikelloja.", l: "Ei tarvita", i: "2. asteen palovamma", o: ["Palovamma", "Ihottuma", "Syyhy"], a: "Palovamma", info: "Jäähdytys haalealla vedellä on tärkeää." },
+    { q: "Sormivälit kutisevat hulluna varsinkin iltaisin.", l: "Ei otettu", i: "Iholla pieniä käytäviä", o: ["Syyhy", "Kuiva iho", "Allergia"], a: "Syyhy", info: "Syyhypunkki leviää koko perheeseen." },
+    { q: "Vatsakipu on kova ja säteilee vyömäisesti selkään.", l: "Amylaasi pilvissä", i: "CT: Haima turvoksissa", o: ["Haimatulehdus", "Mahahaava", "Närästys"], a: "Haimatulehdus", info: "Usein syynä alkoholi tai sappikivet." },
+    { q: "Lapsella on kuumetta ja iholla kutisevia vesikelloja.", l: "Ei otettu", i: "Tyypilliset näppylät", o: ["Vesirokko", "Syyhy", "Ihottuma"], a: "Vesirokko", info: "Erittäin tarttuva virustauti." },
+    { q: "Ukkovarvas on tulipunainen, turvonnut ja tosi kipeä.", l: "Uraatti koholla", i: "Nivelnestekiteitä", o: ["Kihti", "Murtuma", "Vaivaisenluu"], a: "Kihti",
     // KOPIOI TÄSTÄ ALASPÄIN UUSIA RIVEJÄ:
     { q: "Rintaa puristaa ja hiki valuu.", l: "Troponiini koholla", i: "EKG: ST-nousu", o: ["Sydäninfarkti", "Närästys", "Paniikki"], a: "Sydäninfarkti", info: "Hätätilanne!" },
     { q: "Vatsa oikealta alhaalta kipeä.", l: "CRP 90", i: "UÄ: Umpisuoli turvassa", o: ["Umpisuoli", "Vatsatauti", "Kramppi"], a: "Umpisuoli", info: "Leikataan usein." },
